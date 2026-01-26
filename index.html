@@ -1,0 +1,2494 @@
+<!doctype html>
+<html lang="id" class="h-full">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Poskestren Al-Umm</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="/_sdk/data_sdk.js"></script>
+  <script src="/_sdk/element_sdk.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+  <style>
+    body {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+    }
+    
+    * {
+      box-sizing: border-box;
+    }
+
+    .gradient-bg {
+      background: linear-gradient(135deg, #0a2463 0%, #3baea0 100%);
+    }
+
+    .card-shadow {
+      box-shadow: 0 10px 30px rgba(53, 0, 104, 0.15);
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #3baea0 0%, #2d8a7f 100%);
+      transition: all 0.3s ease;
+    }
+
+    .btn-primary:hover {
+      background: linear-gradient(135deg, #2d8a7f 0%, #226b63 100%);
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(59, 174, 160, 0.4);
+    }
+
+    .input-field {
+      transition: all 0.3s ease;
+    }
+
+    .input-field:focus {
+      border-color: #3baea0;
+      box-shadow: 0 0 0 3px rgba(59, 174, 160, 0.1);
+    }
+
+    .menu-item {
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .menu-item:hover {
+      background: rgba(255, 255, 255, 0.15);
+      transform: translateY(-2px);
+    }
+
+    .menu-item.active {
+      background: rgba(255, 255, 255, 0.25);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    .loading {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 3px solid rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      border-top-color: white;
+      animation: spin 1s ease-in-out infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .fade-in {
+      animation: fadeIn 0.3s ease-in;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .table-container {
+      overflow-x: auto;
+    }
+
+    table {
+      border-collapse: collapse;
+      width: 100%;
+    }
+
+    th, td {
+      padding: 12px;
+      text-align: left;
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    th {
+      background: linear-gradient(135deg, #e8f4f3 0%, #e0f2f7 100%);
+      font-weight: 600;
+      color: #0a2463;
+    }
+
+    tr:hover {
+      background: #f9fafb;
+    }
+
+    .student-card {
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .student-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 30px rgba(59, 174, 160, 0.25);
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .header-nav {
+      background: linear-gradient(135deg, #0a2463 0%, #3baea0 100%);
+      box-shadow: 0 4px 20px rgba(10, 36, 99, 0.3);
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 1000;
+      animation: fadeIn 0.2s ease-in;
+    }
+
+    .modal.active {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-content {
+      background: white;
+      border-radius: 16px;
+      width: 90%;
+      max-width: 900px;
+      max-height: 90%;
+      overflow-y: auto;
+      animation: slideUp 0.3s ease-out;
+    }
+
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .badge-kurus { background: #fef3c7; color: #92400e; }
+    .badge-normal { background: #d1fae5; color: #065f46; }
+    .badge-gemuk { background: #fed7aa; color: #9a3412; }
+    .badge-obesitas { background: #fecaca; color: #991b1b; }
+  </style>
+  <style>@view-transition { navigation: auto; }</style>
+ </head>
+ <body class="h-full">
+  <div id="app" class="h-full w-full"></div>
+  <script>
+    const defaultConfig = {
+      app_title: "Poskestren Al-Umm",
+      school_name: "Poskestren Al-Umm Pondok Pesantren Al-Umm Malang",
+      primary_color: "#0a2463",
+      secondary_color: "#3baea0",
+      background_color: "#f0f8ff",
+      text_color: "#1a2332",
+      surface_color: "#ffffff"
+    };
+
+    let config = { ...defaultConfig };
+    let currentUser = null;
+    let studentsData = [];
+    let allRecords = [];
+    let currentMenu = 'layanan';
+
+    const users = [
+      { nama: "Heri Bagus Ardiansyah, M.Pd.", peran: "Kepala Sekolah", username: "heri", password: "2202" },
+      { nama: "Muchamad Hanafi, S.Pd., Gr.", peran: "Admin", username: "hanafi", password: "1705" },
+      { nama: "Abd. Wahid, S.Pd., M.Si.", peran: "Kepala Madrasah", username: "wahid", password: "ma01" },
+      { nama: "Musyrif", peran: "Musyrif", username: "musyrif", password: "putra" },
+      { nama: "Musyrifah", peran: "Musyrifah", username: "musyrifah", password: "putri" },
+      { nama: "Moh. Fachrizal Rosyid, S.Kep., Ns.", peran: "Petugas UKS", username: "rosyid", password: "0208" },
+      { nama: "Santi Anggraeni, S.Keb, Bd.", peran: "Petugas UKS", username: "santi", password: "2706" },
+      { nama: "Siti Nur Hidayah, Amd.Kep", peran: "Petugas UKS", username: "siti", password: "ukssmp" }
+    ];
+
+    let layananFromSheet = [];
+    let mcuFromSheet = [];
+    let rujukanFromSheet = [];
+
+    async function loadStudentsFromCSV(showNotification = true) {
+      try {
+        const response = await fetch('https://docs.google.com/spreadsheets/d/e/2PACX-1vTqFEcX2Dcpzo4SN1Cu-TCtkrae7qAzjKQ8WF9axNxQdovls_RtSdNdT4BP1C_MHTL1z17iDHfoklMJ/pub?gid=0&single=true&output=csv');
+        
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const csvText = await response.text();
+        
+        function parseCSVLine(line) {
+          const result = [];
+          let current = '';
+          let inQuotes = false;
+          
+          for (let i = 0; i < line.length; i++) {
+            const char = line[i];
+            const nextChar = line[i + 1];
+            
+            if (char === '"') {
+              if (inQuotes && nextChar === '"') {
+                current += '"';
+                i++;
+              } else {
+                inQuotes = !inQuotes;
+              }
+            } else if (char === ',' && !inQuotes) {
+              result.push(current.trim());
+              current = '';
+            } else {
+              current += char;
+            }
+          }
+          result.push(current.trim());
+          return result;
+        }
+        
+        const lines = csvText.split('\n').filter(line => line.trim());
+        const students = [];
+        
+        for (let i = 1; i < lines.length; i++) {
+          const cols = parseCSVLine(lines[i]);
+          
+          if (cols.length >= 5 && cols[0]) {
+            students.push({
+              nis: cols[0],
+              nama: cols[1],
+              kelas: cols[2],
+              petugasUKS: cols[3],
+              musyrif: cols[4]
+            });
+          }
+        }
+        
+        studentsData = students;
+        
+        if (showNotification) {
+          const notification = document.createElement('div');
+          notification.innerHTML = `
+            <div style="position: fixed; top: 20px; right: 20px; background: #10b981; color: white; padding: 16px 24px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); z-index: 9999;">
+              ✓ ${students.length} data siswa berhasil dimuat
+            </div>
+          `;
+          document.body.appendChild(notification);
+          setTimeout(() => notification.remove(), 3000);
+        }
+        
+        return students;
+      } catch (error) {
+        console.error('Error loading students:', error);
+        
+        if (showNotification) {
+          const notification = document.createElement('div');
+          notification.innerHTML = `
+            <div style="position: fixed; top: 20px; right: 20px; background: #ef4444; color: white; padding: 16px 24px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); z-index: 9999;">
+              ⚠ Gagal memuat data dari spreadsheet
+            </div>
+          `;
+          document.body.appendChild(notification);
+          setTimeout(() => notification.remove(), 3000);
+        }
+        
+        studentsData = [];
+        return [];
+      }
+    }
+
+    async function loadLayananFromCSV(showNotification = true) {
+      try {
+        const response = await fetch('https://docs.google.com/spreadsheets/d/e/2PACX-1vTqFEcX2Dcpzo4SN1Cu-TCtkrae7qAzjKQ8WF9axNxQdovls_RtSdNdT4BP1C_MHTL1z17iDHfoklMJ/pub?gid=845631597&single=true&output=csv');
+        
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const csvText = await response.text();
+        
+        function parseCSVLine(line) {
+          const result = [];
+          let current = '';
+          let inQuotes = false;
+          
+          for (let i = 0; i < line.length; i++) {
+            const char = line[i];
+            const nextChar = line[i + 1];
+            
+            if (char === '"') {
+              if (inQuotes && nextChar === '"') {
+                current += '"';
+                i++;
+              } else {
+                inQuotes = !inQuotes;
+              }
+            } else if (char === ',' && !inQuotes) {
+              result.push(current.trim());
+              current = '';
+            } else {
+              current += char;
+            }
+          }
+          result.push(current.trim());
+          return result;
+        }
+        
+        function parseDateToTimestamp(dateStr) {
+          if (!dateStr || !dateStr.includes('/')) return Date.now();
+          const parts = dateStr.split('/');
+          if (parts.length !== 3) return Date.now();
+          const day = parseInt(parts[0]);
+          const month = parseInt(parts[1]) - 1;
+          const year = parseInt(parts[2]);
+          return new Date(year, month, day).getTime();
+        }
+        
+        const lines = csvText.split('\n').filter(line => line.trim());
+        const layananData = [];
+        
+        for (let i = 1; i < lines.length; i++) {
+          const cols = parseCSVLine(lines[i]);
+          
+          if (cols.length >= 7 && cols[0]) {
+            layananData.push({
+              tanggal: cols[0],
+              kelas: cols[1],
+              nama_siswa: cols[2],
+              keluhan: cols[3],
+              diagnosis: cols[4],
+              tindakan: cols[5],
+              petugas: cols[6],
+              type: 'layanan',
+              timestamp: parseDateToTimestamp(cols[0])
+            });
+          }
+        }
+        
+        layananFromSheet = layananData;
+        
+        if (showNotification) {
+          const notification = document.createElement('div');
+          notification.innerHTML = `
+            <div style="position: fixed; top: 20px; right: 20px; background: #10b981; color: white; padding: 16px 24px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); z-index: 9999;">
+              ✓ ${layananData.length} data layanan berhasil dimuat
+            </div>
+          `;
+          document.body.appendChild(notification);
+          setTimeout(() => notification.remove(), 3000);
+        }
+        
+        return layananData;
+      } catch (error) {
+        console.error('Error loading layanan:', error);
+        
+        if (showNotification) {
+          const notification = document.createElement('div');
+          notification.innerHTML = `
+            <div style="position: fixed; top: 20px; right: 20px; background: #ef4444; color: white; padding: 16px 24px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); z-index: 9999;">
+              ⚠ Gagal memuat data layanan dari spreadsheet
+            </div>
+          `;
+          document.body.appendChild(notification);
+          setTimeout(() => notification.remove(), 3000);
+        }
+        
+        layananFromSheet = [];
+        return [];
+      }
+    }
+
+    async function loadMCUFromCSV(showNotification = true) {
+      try {
+        const response = await fetch('https://docs.google.com/spreadsheets/d/e/2PACX-1vTqFEcX2Dcpzo4SN1Cu-TCtkrae7qAzjKQ8WF9axNxQdovls_RtSdNdT4BP1C_MHTL1z17iDHfoklMJ/pub?gid=269042976&single=true&output=csv');
+        
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const csvText = await response.text();
+        
+        function parseCSVLine(line) {
+          const result = [];
+          let current = '';
+          let inQuotes = false;
+          
+          for (let i = 0; i < line.length; i++) {
+            const char = line[i];
+            const nextChar = line[i + 1];
+            
+            if (char === '"') {
+              if (inQuotes && nextChar === '"') {
+                current += '"';
+                i++;
+              } else {
+                inQuotes = !inQuotes;
+              }
+            } else if (char === ',' && !inQuotes) {
+              result.push(current.trim());
+              current = '';
+            } else {
+              current += char;
+            }
+          }
+          result.push(current.trim());
+          return result;
+        }
+        
+        function parseDateToTimestamp(dateStr) {
+          if (!dateStr || !dateStr.includes('/')) return Date.now();
+          const parts = dateStr.split('/');
+          if (parts.length !== 3) return Date.now();
+          const day = parseInt(parts[0]);
+          const month = parseInt(parts[1]) - 1;
+          const year = parseInt(parts[2]);
+          return new Date(year, month, day).getTime();
+        }
+        
+        const lines = csvText.split('\n').filter(line => line.trim());
+        const mcuData = [];
+        
+        for (let i = 1; i < lines.length; i++) {
+          const cols = parseCSVLine(lines[i]);
+          
+          if (cols.length >= 12 && cols[0] && cols[2]) {
+            const mcuRecord = {
+              tanggal: cols[0],
+              kelas: cols[1],
+              nama_siswa: cols[2],
+              tinggi_badan: parseFloat(cols[3]) || 0,
+              berat_badan: parseFloat(cols[4]) || 0,
+              imt: parseFloat(cols[5]) || 0,
+              kategori_gizi: cols[6] || '',
+              kesehatan_kulit: cols[7] || '',
+              kesehatan_mata: cols[8] || '',
+              kesehatan_telinga: cols[9] || '',
+              kesehatan_gigi: cols[10] || '',
+              petugas: cols[11] || '',
+              type: 'mcu',
+              timestamp: parseDateToTimestamp(cols[0])
+            };
+            mcuData.push(mcuRecord);
+          }
+        }
+        
+        mcuFromSheet = mcuData;
+        
+        if (showNotification) {
+          const notification = document.createElement('div');
+          notification.innerHTML = `
+            <div style="position: fixed; top: 20px; right: 20px; background: #10b981; color: white; padding: 16px 24px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); z-index: 9999;">
+              ✓ ${mcuData.length} data MCU berhasil dimuat
+            </div>
+          `;
+          document.body.appendChild(notification);
+          setTimeout(() => notification.remove(), 3000);
+        }
+        
+        return mcuData;
+      } catch (error) {
+        console.error('Error loading MCU:', error);
+        
+        if (showNotification) {
+          const notification = document.createElement('div');
+          notification.innerHTML = `
+            <div style="position: fixed; top: 20px; right: 20px; background: #ef4444; color: white; padding: 16px 24px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); z-index: 9999;">
+              ⚠ Gagal memuat data MCU dari spreadsheet: ${error.message}
+            </div>
+          `;
+          document.body.appendChild(notification);
+          setTimeout(() => notification.remove(), 3000);
+        }
+        
+        mcuFromSheet = [];
+        return [];
+      }
+    }
+
+    async function loadRujukanFromCSV(showNotification = true) {
+      try {
+        const response = await fetch('https://docs.google.com/spreadsheets/d/e/2PACX-1vTqFEcX2Dcpzo4SN1Cu-TCtkrae7qAzjKQ8WF9axNxQdovls_RtSdNdT4BP1C_MHTL1z17iDHfoklMJ/pub?gid=1254796060&single=true&output=csv');
+        
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const csvText = await response.text();
+        
+        function parseCSVLine(line) {
+          const result = [];
+          let current = '';
+          let inQuotes = false;
+          
+          for (let i = 0; i < line.length; i++) {
+            const char = line[i];
+            const nextChar = line[i + 1];
+            
+            if (char === '"') {
+              if (inQuotes && nextChar === '"') {
+                current += '"';
+                i++;
+              } else {
+                inQuotes = !inQuotes;
+              }
+            } else if (char === ',' && !inQuotes) {
+              result.push(current.trim());
+              current = '';
+            } else {
+              current += char;
+            }
+          }
+          result.push(current.trim());
+          return result;
+        }
+        
+        function parseDateToTimestamp(dateStr) {
+          if (!dateStr || !dateStr.includes('/')) return Date.now();
+          const parts = dateStr.split('/');
+          if (parts.length !== 3) return Date.now();
+          const day = parseInt(parts[0]);
+          const month = parseInt(parts[1]) - 1;
+          const year = parseInt(parts[2]);
+          return new Date(year, month, day).getTime();
+        }
+        
+        const lines = csvText.split('\n').filter(line => line.trim());
+        const rujukanData = [];
+        
+        for (let i = 1; i < lines.length; i++) {
+          const cols = parseCSVLine(lines[i]);
+          
+          if (cols.length >= 9 && cols[0]) {
+            rujukanData.push({
+              tanggal: cols[0],
+              jam: cols[1],
+              kelas: cols[2],
+              nama_siswa: cols[3],
+              keluhan: cols[4],
+              tindakan: cols[5],
+              alasan: cols[6],
+              tujuan: cols[7],
+              petugas: cols[8],
+              type: 'rujukan',
+              timestamp: parseDateToTimestamp(cols[0])
+            });
+          }
+        }
+        
+        rujukanFromSheet = rujukanData;
+        
+        if (showNotification) {
+          const notification = document.createElement('div');
+          notification.innerHTML = `
+            <div style="position: fixed; top: 20px; right: 20px; background: #10b981; color: white; padding: 16px 24px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); z-index: 9999;">
+              ✓ ${rujukanData.length} data rujukan berhasil dimuat
+            </div>
+          `;
+          document.body.appendChild(notification);
+          setTimeout(() => notification.remove(), 3000);
+        }
+        
+        return rujukanData;
+      } catch (error) {
+        console.error('Error loading rujukan:', error);
+        
+        if (showNotification) {
+          const notification = document.createElement('div');
+          notification.innerHTML = `
+            <div style="position: fixed; top: 20px; right: 20px; background: #ef4444; color: white; padding: 16px 24px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); z-index: 9999;">
+              ⚠ Gagal memuat data rujukan dari spreadsheet
+            </div>
+          `;
+          document.body.appendChild(notification);
+          setTimeout(() => notification.remove(), 3000);
+        }
+        
+        rujukanFromSheet = [];
+        return [];
+      }
+    }
+
+    function getFilteredStudents() {
+      if (!currentUser) return [];
+      
+      if (currentUser.peran === "Petugas UKS") {
+        const currentUserNameWithoutTitle = currentUser.nama.split(',')[0].trim();
+        return studentsData.filter(s => {
+          if (!s.petugasUKS) return false;
+          const petugasName = s.petugasUKS.split(',')[0].trim();
+          return petugasName === currentUserNameWithoutTitle;
+        });
+      } else if (currentUser.peran === "Musyrif") {
+        return studentsData.filter(s => {
+          const musyrifValue = s.musyrif ? s.musyrif.trim().toLowerCase() : '';
+          return musyrifValue === 'musyrif' || musyrifValue === 'musrif';
+        });
+      } else if (currentUser.peran === "Musyrifah") {
+        return studentsData.filter(s => {
+          const musyrifValue = s.musyrif ? s.musyrif.trim().toLowerCase() : '';
+          return musyrifValue === 'musyrifah' || musyrifValue === 'musrifah';
+        });
+      }
+      
+      return studentsData;
+    }
+
+    function getUniqueClasses() {
+      const filtered = getFilteredStudents();
+      return [...new Set(filtered.map(s => s.kelas))].sort();
+    }
+
+    function renderLoginPage() {
+      const appDiv = document.getElementById('app');
+      appDiv.style.background = `linear-gradient(135deg, ${config.primary_color} 0%, ${config.secondary_color} 100%)`;
+      
+      appDiv.innerHTML = `
+        <div class="flex items-center justify-center h-full w-full p-4">
+          <div class="w-full max-w-md">
+            <div class="card-shadow rounded-2xl p-8 fade-in" style="background: ${config.surface_color};">
+              <div class="text-center mb-8">
+                <img src="https://iili.io/fENwpbp.png" alt="Logo" class="w-24 h-24 mx-auto mb-4 object-contain">
+                <h1 class="text-3xl font-bold mb-2" style="background: linear-gradient(135deg, ${config.primary_color} 0%, ${config.secondary_color} 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">${config.app_title}</h1>
+                <p class="text-gray-600">Pesantren Al-Umm Malang</p>
+              </div>
+              
+              <form id="loginForm" class="space-y-6">
+                <div>
+                  <label class="block text-sm font-medium mb-2" style="color: ${config.text_color};">Username</label>
+                  <input 
+                    type="text" 
+                    id="username" 
+                    required
+                    class="input-field w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none"
+                    placeholder="Masukkan username"
+                  >
+                </div>
+                
+                <div>
+                  <label class="block text-sm font-medium mb-2" style="color: ${config.text_color};">Password</label>
+                  <input 
+                    type="password" 
+                    id="password" 
+                    required
+                    class="input-field w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none"
+                    placeholder="Masukkan password"
+                  >
+                </div>
+                
+                <div id="loginError" class="hidden text-sm p-3 rounded-lg" style="background: rgba(239, 68, 68, 0.1); color: #dc2626;"></div>
+                
+                <button 
+                  type="submit" 
+                  id="loginBtn"
+                  class="btn-primary w-full py-3 rounded-lg text-white font-semibold"
+                >
+                  Masuk
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+      `;
+
+      document.getElementById('loginForm').addEventListener('submit', handleLogin);
+    }
+
+    async function handleLogin(e) {
+      e.preventDefault();
+      
+      const username = document.getElementById('username').value.trim();
+      const password = document.getElementById('password').value;
+      const errorDiv = document.getElementById('loginError');
+      const loginBtn = document.getElementById('loginBtn');
+      
+      const user = users.find(u => u.username === username && u.password === password);
+      
+      if (user) {
+        loginBtn.innerHTML = '<span class="loading"></span>';
+        loginBtn.disabled = true;
+        
+        currentUser = user;
+        renderMainApp();
+        
+        // Load data di background setelah login (tanpa notifikasi)
+        loadStudentsFromCSV(false);
+        loadLayananFromCSV(false);
+        loadMCUFromCSV(false);
+        loadRujukanFromCSV(false);
+      } else {
+        errorDiv.textContent = 'Username atau password salah!';
+        errorDiv.classList.remove('hidden');
+        setTimeout(() => errorDiv.classList.add('hidden'), 3000);
+      }
+    }
+
+    function renderMainApp() {
+      const appDiv = document.getElementById('app');
+      appDiv.style.background = config.background_color;
+      
+      appDiv.innerHTML = `
+        <div class="flex flex-col h-full w-full">
+          <header class="header-nav shadow-lg">
+            <div class="flex items-center justify-between px-4 py-2">
+              <div class="flex items-center space-x-3">
+                <img src="https://iili.io/fENwpbp.png" alt="Logo" class="w-10 h-10 object-contain">
+                <div>
+                  <h1 class="text-base font-bold text-white leading-tight">Poskestren Digital</h1>
+                  <p class="text-xs text-white opacity-80 leading-tight">Pondok Pesantren Al-Umm Malang</p>
+                </div>
+              </div>
+              <button class="menu-item px-4 py-2 rounded-lg text-white border border-white border-opacity-40 hover:bg-white hover:bg-opacity-20 transition-all text-xs font-medium" data-menu="logout">
+                Keluar
+              </button>
+            </div>
+            
+            <div class="px-4 py-1 border-t border-white border-opacity-20">
+              <nav class="flex items-center space-x-1">
+                <button class="menu-item active px-3 py-1 rounded-lg text-white font-medium text-xs" data-menu="layanan">
+                  Layanan
+                </button>
+                <button class="menu-item px-3 py-1 rounded-lg text-white font-medium text-xs" data-menu="mcu">
+                  MCU
+                </button>
+                <button class="menu-item px-3 py-1 rounded-lg text-white font-medium text-xs" data-menu="rujukan">
+                  Rujukan
+                </button>
+                <button class="menu-item px-3 py-1 rounded-lg text-white font-medium text-xs" data-menu="laporan">
+                  Laporan
+                </button>
+              </nav>
+            </div>
+          </header>
+          
+          <div class="flex-1 overflow-auto">
+            <div id="mainContent" class="p-8"></div>
+          </div>
+          
+          <footer class="header-nav shadow-lg">
+            <div class="px-4 py-1 text-center">
+              <p class="text-white text-xs">
+                ${currentUser.nama} - ${currentUser.peran}
+              </p>
+            </div>
+          </footer>
+        </div>
+      `;
+
+      document.querySelectorAll('.menu-item').forEach(item => {
+        item.addEventListener('click', function() {
+          const menu = this.getAttribute('data-menu');
+          if (menu === 'logout') {
+            currentUser = null;
+            renderLoginPage();
+            return;
+          }
+          
+          document.querySelectorAll('.menu-item').forEach(m => m.classList.remove('active'));
+          this.classList.add('active');
+          currentMenu = menu;
+          renderContent(menu);
+        });
+      });
+
+      renderContent('layanan');
+    }
+
+    function renderContent(menu) {
+      const contentDiv = document.getElementById('mainContent');
+      
+      switch(menu) {
+        case 'layanan':
+          renderLayanan(contentDiv);
+          break;
+        case 'mcu':
+          renderSantri(contentDiv);
+          break;
+        case 'rujukan':
+          renderRujukan(contentDiv);
+          break;
+        case 'laporan':
+          renderLaporan(contentDiv);
+          break;
+      }
+    }
+
+    function renderLayanan(contentDiv) {
+      const classes = getUniqueClasses();
+      const students = getFilteredStudents();
+      
+      contentDiv.innerHTML = `
+        <div class="fade-in">
+          <h2 class="text-3xl font-bold mb-6" style="color: ${config.primary_color};">Layanan Kesehatan</h2>
+          
+          <div class="card-shadow rounded-xl p-6 mb-6" style="background: ${config.surface_color};">
+            <h3 class="text-xl font-semibold mb-4" style="color: ${config.text_color};">Tambah Catatan Layanan</h3>
+            <form id="layananForm" class="space-y-4" onkeydown="return event.key !== 'Enter';">
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label class="block text-sm font-medium mb-2" style="color: ${config.text_color};">Tanggal</label>
+                  <input type="date" id="tanggal" required class="input-field w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none">
+                </div>
+                <div>
+                  <label class="block text-sm font-medium mb-2" style="color: ${config.text_color};">Kelas</label>
+                  <select id="kelas" required class="input-field w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none">
+                    <option value="">Pilih Kelas</option>
+                    ${classes.map(c => `<option value="${c}">${c}</option>`).join('')}
+                  </select>
+                </div>
+              </div>
+              
+              <div>
+                <label class="block text-sm font-medium mb-2" style="color: ${config.text_color};">Nama Siswa</label>
+                <select id="namaSiswa" required class="input-field w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none">
+                  <option value="">Pilih Siswa</option>
+                </select>
+              </div>
+              
+              <div>
+                <label class="block text-sm font-medium mb-2" style="color: ${config.text_color};">Keluhan</label>
+                <textarea id="keluhan" required rows="3" class="input-field w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none" placeholder="Deskripsikan keluhan santri"></textarea>
+              </div>
+              
+              <div>
+                <label class="block text-sm font-medium mb-2" style="color: ${config.text_color};">Diagnosis</label>
+                <input type="text" id="diagnosis" required class="input-field w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none" placeholder="Diagnosis">
+              </div>
+              
+              <div>
+                <label class="block text-sm font-medium mb-2" style="color: ${config.text_color};">Tindakan / Resep Obat</label>
+                <textarea id="tindakan" required rows="3" class="input-field w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none" placeholder="Tindakan yang dilakukan dan obat yang diberikan"></textarea>
+              </div>
+              
+              <div>
+                <label class="block text-sm font-medium mb-2" style="color: ${config.text_color};">Petugas</label>
+                <input type="text" id="petugas" ${currentUser.peran === "Musyrif" || currentUser.peran === "Musyrifah" ? '' : 'readonly'} class="input-field w-full px-4 py-2 border border-gray-300 rounded-lg ${currentUser.peran === "Musyrif" || currentUser.peran === "Musyrifah" ? '' : 'bg-gray-50'} focus:outline-none" value="${currentUser.peran === "Musyrif" || currentUser.peran === "Musyrifah" ? '' : currentUser.nama}" placeholder="${currentUser.peran === "Musyrif" || currentUser.peran === "Musyrifah" ? 'Ketik nama petugas' : ''}" required>
+              </div>
+              
+              <button type="submit" id="submitBtn" class="btn-primary px-6 py-3 rounded-lg text-white font-semibold">
+                Simpan Catatan
+              </button>
+            </form>
+          </div>
+          
+          <div class="card-shadow rounded-xl p-6" style="background: ${config.surface_color};">
+            <h3 class="text-xl font-semibold mb-4" style="color: ${config.text_color};">Riwayat Layanan Hari Ini</h3>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+              <div>
+                <label class="block text-sm font-medium mb-2" style="color: ${config.text_color};">Kelas</label>
+                <select id="filterKelas" class="input-field w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none">
+                  <option value="">Semua Kelas</option>
+                  ${classes.map(c => `<option value="${c}">${c}</option>`).join('')}
+                </select>
+              </div>
+              <div>
+                <label class="block text-sm font-medium mb-2" style="color: ${config.text_color};">Nama Siswa</label>
+                <input type="text" id="filterNama" placeholder="Cari nama siswa..." class="input-field w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none">
+              </div>
+              <div class="flex items-end space-x-2">
+                <button id="refreshLayananBtn" class="btn-primary flex-1 px-4 py-2 rounded-lg text-white font-semibold">
+                  🔄 Refresh
+                </button>
+                <button id="resetFilterBtn" class="flex-1 px-4 py-2 rounded-lg border border-gray-300" style="color: ${config.text_color};">
+                  Reset Filter
+                </button>
+              </div>
+            </div>
+            
+            <div id="recordsList" class="table-container"></div>
+          </div>
+        </div>
+      `;
+
+      document.getElementById('tanggal').valueAsDate = new Date();
+      
+      document.getElementById('kelas').addEventListener('change', function() {
+        const selectedClass = this.value;
+        const namaSiswaSelect = document.getElementById('namaSiswa');
+        const filteredStudents = students.filter(s => s.kelas === selectedClass);
+        
+        namaSiswaSelect.innerHTML = '<option value="">Pilih Santri</option>' + 
+          filteredStudents.map(s => `<option value="${s.nama}">${s.nama}</option>`).join('');
+      });
+
+      document.getElementById('layananForm').addEventListener('submit', handleLayananFormSubmit);
+      document.getElementById('refreshLayananBtn').addEventListener('click', async function() {
+        this.innerHTML = '<span class="loading"></span>';
+        this.disabled = true;
+        await loadLayananFromCSV();
+        displayRecords();
+        this.innerHTML = '🔄 Refresh';
+        this.disabled = false;
+      });
+      document.getElementById('resetFilterBtn').addEventListener('click', resetFilters);
+      
+      document.getElementById('filterKelas').addEventListener('change', filterRecords);
+      document.getElementById('filterNama').addEventListener('input', filterRecords);
+      
+      displayRecords();
+    }
+
+    function formatDateToDDMMYYYY(dateString) {
+      const date = new Date(dateString);
+      const day = String(date.getDate()).padStart(2, '0');
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const year = date.getFullYear();
+      return `${day}/${month}/${year}`;
+    }
+
+    async function handleLayananFormSubmit(e) {
+      e.preventDefault();
+      
+      const submitBtn = document.getElementById('submitBtn');
+      submitBtn.innerHTML = '<span class="loading"></span>';
+      submitBtn.disabled = true;
+      
+      const tanggalInput = document.getElementById('tanggal').value;
+      const tanggalFormatted = formatDateToDDMMYYYY(tanggalInput);
+      
+      const record = {
+        type: 'layanan',
+        tanggal: tanggalFormatted,
+        kelas: document.getElementById('kelas').value,
+        nama_siswa: document.getElementById('namaSiswa').value,
+        keluhan: document.getElementById('keluhan').value,
+        diagnosis: document.getElementById('diagnosis').value,
+        tindakan: document.getElementById('tindakan').value,
+        petugas: document.getElementById('petugas').value,
+        timestamp: Date.now()
+      };
+
+      if (allRecords.length >= 999) {
+        showNotification('Maksimum 999 catatan tercapai. Silakan hapus beberapa catatan terlebih dahulu.', 'error');
+        submitBtn.innerHTML = 'Simpan Catatan';
+        submitBtn.disabled = false;
+        return;
+      }
+
+      const result = await window.dataSdk.create(record);
+      
+      if (result.isOk) {
+        try {
+          await fetch('https://script.google.com/macros/s/AKfycbycNOwCOGO05JhttlBF_cD8BQr3pwAbRlpFfxDc6H4aS9lP3FrQuqMk0MpkPbwZ6oko/exec', {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              tanggal: record.tanggal,
+              kelas: record.kelas,
+              nama_siswa: record.nama_siswa,
+              keluhan: record.keluhan,
+              diagnosis: record.diagnosis,
+              tindakan: record.tindakan,
+              petugas: record.petugas
+            })
+          });
+        } catch (error) {
+          console.log('Google Sheets sync:', error);
+        }
+        
+        document.getElementById('layananForm').reset();
+        document.getElementById('tanggal').valueAsDate = new Date();
+        document.getElementById('petugas').value = (currentUser.peran === "Musrif" || currentUser.peran === "Musrifah") ? '' : currentUser.nama;
+        showNotification('Catatan layanan berhasil disimpan!', 'success');
+      } else {
+        showNotification('Gagal menyimpan catatan. Silakan coba lagi.', 'error');
+      }
+      
+      submitBtn.innerHTML = 'Simpan Catatan';
+      submitBtn.disabled = false;
+    }
+
+    function showNotification(message, type = 'success') {
+      const bgColor = type === 'success' ? '#10b981' : '#ef4444';
+      const notification = document.createElement('div');
+      notification.innerHTML = `
+        <div style="position: fixed; top: 20px; right: 20px; background: ${bgColor}; color: white; padding: 16px 24px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); z-index: 9999;">
+          ${type === 'success' ? '✓' : '⚠'} ${message}
+        </div>
+      `;
+      document.body.appendChild(notification);
+      setTimeout(() => notification.remove(), 3000);
+    }
+
+    function displayRecords() {
+      const recordsList = document.getElementById('recordsList');
+      if (!recordsList) return;
+      
+      const fromSheet = [...layananFromSheet];
+      const fromLocal = allRecords.filter(r => r.type === 'layanan');
+      
+      const combinedMap = new Map();
+      [...fromSheet, ...fromLocal].forEach(record => {
+        const key = `${record.tanggal}_${record.nama_siswa}_${record.keluhan}`;
+        if (!combinedMap.has(key)) {
+          combinedMap.set(key, record);
+        }
+      });
+      
+      const allLayanan = Array.from(combinedMap.values());
+      
+      const today = new Date();
+      const todayDay = String(today.getDate()).padStart(2, '0');
+      const todayMonth = String(today.getMonth() + 1).padStart(2, '0');
+      const todayYear = today.getFullYear();
+      const todayFormatted = `${todayDay}/${todayMonth}/${todayYear}`;
+      
+      let todayRecords = allLayanan.filter(r => r.tanggal === todayFormatted);
+      
+      const filteredStudents = getFilteredStudents();
+      const filteredStudentNames = filteredStudents.map(s => s.nama);
+      
+      if (currentUser.peran === "Petugas UKS" || currentUser.peran === "Musyrif" || currentUser.peran === "Musyrifah") {
+        todayRecords = todayRecords.filter(r => filteredStudentNames.includes(r.nama_siswa));
+      }
+      
+      const sortedRecords = [...todayRecords].sort((a, b) => b.timestamp - a.timestamp);
+      
+      if (sortedRecords.length === 0) {
+        recordsList.innerHTML = `
+          <div class="mb-4 p-4 rounded-lg" style="background: rgba(239, 68, 68, 0.1);">
+            <p class="text-center font-semibold" style="color: #dc2626;">
+              ℹ️ Belum ada catatan layanan untuk hari ini (${todayFormatted})
+            </p>
+          </div>
+        `;
+        return;
+      }
+      
+      recordsList.innerHTML = `
+        <div class="mb-4 p-4 rounded-lg" style="background: rgba(59, 174, 160, 0.1);">
+          <p class="text-center font-semibold" style="color: ${config.secondary_color};">
+            📊 Menampilkan ${sortedRecords.length} data layanan hari ini (${todayFormatted})
+          </p>
+        </div>
+        <table class="w-full">
+          <thead>
+            <tr>
+              <th>Tanggal</th>
+              <th>Kelas</th>
+              <th>Nama Santri</th>
+              <th>Keluhan</th>
+              <th>Diagnosis</th>
+              <th>Tindakan</th>
+              <th>Petugas</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${sortedRecords.map(record => `
+              <tr>
+                <td>${record.tanggal}</td>
+                <td>${record.kelas}</td>
+                <td>${record.nama_siswa}</td>
+                <td>${record.keluhan}</td>
+                <td>${record.diagnosis}</td>
+                <td>${record.tindakan}</td>
+                <td>${record.petugas}</td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      `;
+    }
+
+    function filterRecords() {
+      const filterKelas = document.getElementById('filterKelas')?.value || '';
+      const filterNama = document.getElementById('filterNama')?.value.toLowerCase() || '';
+      
+      const fromSheet = [...layananFromSheet];
+      const fromLocal = allRecords.filter(r => r.type === 'layanan');
+      
+      const combinedMap = new Map();
+      [...fromSheet, ...fromLocal].forEach(record => {
+        const key = `${record.tanggal}_${record.nama_siswa}_${record.keluhan}`;
+        if (!combinedMap.has(key)) {
+          combinedMap.set(key, record);
+        }
+      });
+      
+      const allLayanan = Array.from(combinedMap.values());
+      
+      const today = new Date();
+      const todayDay = String(today.getDate()).padStart(2, '0');
+      const todayMonth = String(today.getMonth() + 1).padStart(2, '0');
+      const todayYear = today.getFullYear();
+      const todayFormatted = `${todayDay}/${todayMonth}/${todayYear}`;
+      
+      let filtered = allLayanan.filter(r => r.tanggal === todayFormatted);
+      
+      const filteredStudents = getFilteredStudents();
+      const filteredStudentNames = filteredStudents.map(s => s.nama);
+      
+      if (currentUser.peran === "Petugas UKS" || currentUser.peran === "Musyrif" || currentUser.peran === "Musyrifah") {
+        filtered = filtered.filter(r => filteredStudentNames.includes(r.nama_siswa));
+      }
+      
+      if (filterKelas) {
+        filtered = filtered.filter(r => r.kelas === filterKelas);
+      }
+      if (filterNama) {
+        filtered = filtered.filter(r => r.nama_siswa.toLowerCase().includes(filterNama));
+      }
+      
+      const recordsList = document.getElementById('recordsList');
+      if (!recordsList) return;
+      
+      const sortedRecords = filtered.sort((a, b) => b.timestamp - a.timestamp);
+      
+      recordsList.innerHTML = `
+        <div class="mb-4 p-4 rounded-lg" style="background: rgba(59, 174, 160, 0.1);">
+          <p class="text-center font-semibold" style="color: ${config.secondary_color};">
+            📊 Menampilkan ${sortedRecords.length} data layanan hari ini (${todayFormatted}) ${filterKelas ? 'dari kelas ' + filterKelas : ''}
+          </p>
+        </div>
+        <table class="w-full">
+          <thead>
+            <tr>
+              <th>Tanggal</th>
+              <th>Kelas</th>
+              <th>Nama Santri</th>
+              <th>Keluhan</th>
+              <th>Diagnosis</th>
+              <th>Tindakan</th>
+              <th>Petugas</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${sortedRecords.length > 0 ? sortedRecords.map(record => `
+              <tr>
+                <td>${record.tanggal}</td>
+                <td>${record.kelas}</td>
+                <td>${record.nama_siswa}</td>
+                <td>${record.keluhan}</td>
+                <td>${record.diagnosis}</td>
+                <td>${record.tindakan}</td>
+                <td>${record.petugas}</td>
+              </tr>
+            `).join('') : '<tr><td colspan="7" class="text-center py-8 text-gray-500">Tidak ada data hari ini yang sesuai filter</td></tr>'}
+          </tbody>
+        </table>
+      `;
+    }
+
+    function resetFilters() {
+      if (document.getElementById('filterKelas')) document.getElementById('filterKelas').value = '';
+      if (document.getElementById('filterNama')) document.getElementById('filterNama').value = '';
+      displayRecords();
+    }
+
+    function renderSantri(contentDiv) {
+      const classes = getUniqueClasses();
+      const students = getFilteredStudents();
+      
+      contentDiv.innerHTML = `
+        <div class="fade-in">
+          <div class="flex justify-between items-center mb-6">
+            <h2 class="text-3xl font-bold" style="color: ${config.primary_color};">Data Santri</h2>
+            <button id="refreshStudentsBtn" class="btn-primary px-6 py-2 rounded-lg text-white font-semibold">
+              🔄 Refresh Data
+            </button>
+          </div>
+          
+          <div class="card-shadow rounded-xl p-6 mb-6" style="background: ${config.surface_color};">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+              <div>
+                <label class="block text-sm font-medium mb-2" style="color: ${config.text_color};">Pilih Kelas</label>
+                <select id="profilFilterKelas" class="input-field w-full px-4 py-3 border-2 rounded-xl focus:outline-none" style="border-color: ${config.secondary_color};">
+                  <option value="">Semua Kelas</option>
+                  ${classes.map(c => `<option value="${c}">${c}</option>`).join('')}
+                </select>
+              </div>
+              <div>
+                <label class="block text-sm font-medium mb-2" style="color: ${config.text_color};">Cari Nama Santri</label>
+                <input type="text" id="profilFilterNama" placeholder="Ketik nama santri..." class="input-field w-full px-4 py-3 border-2 rounded-xl focus:outline-none" style="border-color: ${config.secondary_color};">
+              </div>
+              <div class="flex items-end">
+                <button id="resetProfilFilterBtn" class="w-full px-4 py-3 rounded-xl border-2 font-semibold" style="border-color: ${config.primary_color}; color: ${config.primary_color};">
+                  Reset Filter
+                </button>
+              </div>
+            </div>
+            <div id="studentCount" class="text-center mt-4 text-lg font-semibold" style="color: ${config.secondary_color};"></div>
+          </div>
+          
+          <div id="studentsList" class="text-center"></div>
+        </div>
+        
+        <div id="studentModal" class="modal">
+          <div class="modal-content">
+            <div id="studentModalContent"></div>
+          </div>
+        </div>
+      `;
+
+      document.getElementById('refreshStudentsBtn').addEventListener('click', async function() {
+        this.innerHTML = '<span class="loading"></span>';
+        this.disabled = true;
+        await loadStudentsFromCSV();
+        displayStudents();
+        this.innerHTML = '🔄 Refresh Data';
+        this.disabled = false;
+      });
+
+      document.getElementById('profilFilterKelas').addEventListener('change', displayStudents);
+      document.getElementById('profilFilterNama').addEventListener('input', displayStudents);
+      document.getElementById('resetProfilFilterBtn').addEventListener('click', () => {
+        document.getElementById('profilFilterKelas').value = '';
+        document.getElementById('profilFilterNama').value = '';
+        displayStudents();
+      });
+
+      displayStudents();
+    }
+
+    function displayStudents() {
+      const studentsList = document.getElementById('studentsList');
+      const studentCount = document.getElementById('studentCount');
+      if (!studentsList) return;
+      
+      const filterKelas = document.getElementById('profilFilterKelas')?.value || '';
+      const filterNama = document.getElementById('profilFilterNama')?.value.toLowerCase() || '';
+      
+      let filtered = getFilteredStudents();
+      
+      if (filterKelas) {
+        filtered = filtered.filter(s => s.kelas === filterKelas);
+      }
+      if (filterNama) {
+        filtered = filtered.filter(s => s.nama.toLowerCase().includes(filterNama));
+      }
+      
+      const uniqueStudents = [];
+      const seenStudents = new Set();
+      
+      for (const student of filtered) {
+        const key = `${student.kelas}|${student.nama}`;
+        if (!seenStudents.has(key)) {
+          seenStudents.add(key);
+          uniqueStudents.push(student);
+        }
+      }
+      
+      if (studentCount) {
+        studentCount.textContent = `Menampilkan ${uniqueStudents.length} santri${filterKelas ? ' dari kelas ' + filterKelas : ''}`;
+      }
+      
+      if (uniqueStudents.length === 0) {
+        studentsList.innerHTML = `<p class="text-center py-12 text-gray-500 text-lg">Tidak ada data santri yang sesuai filter</p>`;
+        return;
+      }
+      
+      const gradients = [
+        'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+        'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
+        'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
+        'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)',
+        'linear-gradient(135deg, #fa709a 0%, #fee140 100%)',
+        'linear-gradient(135deg, #30cfd0 0%, #330867 100%)',
+        'linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)',
+        'linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%)',
+        'linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%)',
+        'linear-gradient(135deg, #ff6e7f 0%, #bfe9ff 100%)'
+      ];
+      
+      studentsList.innerHTML = uniqueStudents.map((student, index) => {
+        // Hanya gunakan data dari spreadsheet
+        const layananRecords = layananFromSheet.filter(r => r.nama_siswa === student.nama && r.kelas === student.kelas);
+        
+        // Hitung MCU dengan deduplikasi yang sama seperti di modal
+        const fromSheetMCU = mcuFromSheet.filter(r => {
+          const namaSheet = (r.nama_siswa || '').trim().toLowerCase();
+          const namaTarget = (student.nama || '').trim().toLowerCase();
+          return namaSheet === namaTarget;
+        });
+        
+        const fromLocalMCU = allRecords.filter(r => {
+          return r.type === 'mcu' && 
+                 (r.nama_siswa || '').trim().toLowerCase() === (student.nama || '').trim().toLowerCase();
+        });
+        
+        // Deduplikasi berdasarkan tanggal, nama, tinggi, berat
+        const mcuMap = new Map();
+        [...fromSheetMCU, ...fromLocalMCU].forEach(record => {
+          const key = `${record.tanggal}_${record.nama_siswa}_${record.tinggi_badan}_${record.berat_badan}`;
+          if (!mcuMap.has(key)) {
+            mcuMap.set(key, record);
+          }
+        });
+        const mcuRecords = Array.from(mcuMap.values());
+        
+        const gradient = gradients[index % gradients.length];
+        const initials = student.nama.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+        const kelasNamaKey = `${student.kelas}|${student.nama}`;
+        
+        return `
+          <div class="student-card card-shadow rounded-2xl p-4" style="background: ${config.surface_color}; width: 200px; display: inline-block; margin: 8px; vertical-align: top;" onclick="openStudentDetail('${kelasNamaKey}')">
+            <div class="text-center">
+              <div class="w-16 h-16 rounded-xl flex items-center justify-center text-white font-bold text-xl shadow-lg mx-auto mb-3" style="background: ${gradient};">
+                ${initials}
+              </div>
+              
+              <div class="space-y-2">
+                <div>
+                  <p class="text-xs text-gray-500">Nama Santri</p>
+                  <p class="font-bold text-sm" style="color: ${config.primary_color};">${student.nama}</p>
+                </div>
+                
+                <div>
+                  <p class="text-xs text-gray-500">Kelas</p>
+                  <span class="badge text-xs" style="background: ${config.secondary_color}; color: white;">${student.kelas}</span>
+                </div>
+                
+                <div>
+                  <p class="text-xs text-gray-500">NIS</p>
+                  <p class="font-semibold text-xs text-gray-700">${student.nis}</p>
+                </div>
+                
+                <div class="flex space-x-2 justify-center mt-3">
+                  <div class="flex-1 p-2 rounded-lg text-center" style="background: rgba(59, 174, 160, 0.1);">
+                    <p class="text-xs text-gray-600">Kunjungan</p>
+                    <p class="text-lg font-bold" style="color: ${config.secondary_color};">${layananRecords.length}</p>
+                  </div>
+                  <div class="flex-1 p-2 rounded-lg text-center" style="background: rgba(10, 36, 99, 0.1);">
+                    <p class="text-xs text-gray-600">MCU</p>
+                    <p class="text-lg font-bold" style="color: ${config.primary_color};">${mcuRecords.length}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function openStudentDetail(kelasNama) {
+      const [kelas, ...namaParts] = kelasNama.split('|');
+      const nama = namaParts.join('|');
+      const student = studentsData.find(s => s.kelas === kelas && s.nama === nama);
+      if (!student) return;
+      
+      // Gabungkan data MCU dari spreadsheet dan local storage
+      const fromSheetMCU = mcuFromSheet.filter(r => {
+        const namaSheet = (r.nama_siswa || '').trim().toLowerCase();
+        const namaTarget = (nama || '').trim().toLowerCase();
+        return namaSheet === namaTarget;
+      });
+      
+      const fromLocalMCU = allRecords.filter(r => {
+        return r.type === 'mcu' && 
+               (r.nama_siswa || '').trim().toLowerCase() === (nama || '').trim().toLowerCase();
+      });
+      
+      // Gabungkan dan deduplikasi berdasarkan tanggal, nama, tinggi, berat
+      const mcuMap = new Map();
+      [...fromSheetMCU, ...fromLocalMCU].forEach(record => {
+        const key = `${record.tanggal}_${record.nama_siswa}_${record.tinggi_badan}_${record.berat_badan}`;
+        if (!mcuMap.has(key)) {
+          mcuMap.set(key, record);
+        }
+      });
+      const mcuRecords = Array.from(mcuMap.values()).sort((a, b) => b.timestamp - a.timestamp);
+      
+      // Hanya gunakan data dari spreadsheet
+      const layananRecords = layananFromSheet.filter(r => {
+        const namaRecord = (r.nama_siswa || '').trim().toLowerCase();
+        const namaTarget = (nama || '').trim().toLowerCase();
+        return namaRecord === namaTarget;
+      }).sort((a, b) => b.timestamp - a.timestamp);
+      
+      const modal = document.getElementById('studentModal');
+      const modalContent = document.getElementById('studentModalContent');
+      
+      modalContent.innerHTML = `
+        <div class="p-6">
+          <div class="flex justify-between items-center mb-6">
+            <div class="flex items-center space-x-4">
+              <div class="w-16 h-16 rounded-full flex items-center justify-center shadow-lg text-white font-bold text-2xl" style="background: linear-gradient(135deg, ${config.primary_color} 0%, ${config.secondary_color} 100%);">
+                ${student.nama.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase()}
+              </div>
+              <div>
+                <h2 class="text-2xl font-bold" style="color: ${config.primary_color};">${student.nama}</h2>
+                <p class="text-gray-600">${student.kelas} • NIS: ${student.nis}</p>
+              </div>
+            </div>
+            <button onclick="closeStudentModal()" class="text-gray-500 hover:text-gray-700 text-2xl font-bold">×</button>
+          </div>
+          
+          <div class="flex space-x-2 mb-6 border-b">
+            <button class="tab-btn active px-6 py-3 font-semibold border-b-2" data-tab="mcu" style="border-color: ${config.primary_color}; color: ${config.primary_color};">
+              Medical Check Up
+            </button>
+            <button class="tab-btn px-6 py-3 font-semibold text-gray-500" data-tab="riwayat">
+              Riwayat Layanan
+            </button>
+          </div>
+          
+          <div id="tab-mcu" class="tab-content">
+            <div class="card-shadow rounded-xl p-6 mb-6" style="background: rgba(59, 174, 160, 0.05);">
+              <h3 class="text-lg font-semibold mb-4" style="color: ${config.text_color};">📋 Input Data Medical Check Up</h3>
+              <form id="mcuForm" class="space-y-4" onkeydown="return event.key !== 'Enter';">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label class="block text-sm font-medium mb-2">Tanggal Pemeriksaan</label>
+                    <input type="date" id="mcuTanggal" required class="input-field w-full px-4 py-2 border rounded-lg focus:outline-none">
+                  </div>
+                  <div>
+                    <label class="block text-sm font-medium mb-2">Petugas</label>
+                    <input type="text" id="mcuPetugas" ${currentUser.peran === "Musyrif" || currentUser.peran === "Musyrifah" ? '' : 'readonly'} class="input-field w-full px-4 py-2 border rounded-lg ${currentUser.peran === "Musyrif" || currentUser.peran === "Musyrifah" ? '' : 'bg-gray-50'}" value="${currentUser.peran === "Musyrif" || currentUser.peran === "Musyrifah" ? '' : currentUser.nama}" placeholder="${currentUser.peran === "Musyrif" || currentUser.peran === "Musyrifah" ? 'Ketik nama petugas' : ''}" required>
+                  </div>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div>
+                    <label class="block text-sm font-medium mb-2">Tinggi Badan (cm)</label>
+                    <input type="number" step="0.1" id="mcuTinggi" required class="input-field w-full px-4 py-2 border rounded-lg focus:outline-none" placeholder="160">
+                  </div>
+                  <div>
+                    <label class="block text-sm font-medium mb-2">Berat Badan (kg)</label>
+                    <input type="number" step="0.1" id="mcuBerat" required class="input-field w-full px-4 py-2 border rounded-lg focus:outline-none" placeholder="50">
+                  </div>
+                  <div>
+                    <label class="block text-sm font-medium mb-2">IMT (otomatis)</label>
+                    <input type="text" id="mcuIMT" readonly class="input-field w-full px-4 py-2 border rounded-lg bg-gray-50" placeholder="--">
+                  </div>
+                </div>
+                
+                <div>
+                  <label class="block text-sm font-medium mb-2">Kategori Status Gizi (otomatis)</label>
+                  <input type="text" id="mcuKategori" readonly class="input-field w-full px-4 py-2 border rounded-lg bg-gray-50" placeholder="--">
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label class="block text-sm font-medium mb-2">Kesehatan Kulit</label>
+                    <input type="text" id="mcuKulit" required class="input-field w-full px-4 py-2 border rounded-lg focus:outline-none" placeholder="Contoh: Sehat, Gatal-gatal, Bintik merah">
+                  </div>
+                  <div>
+                    <label class="block text-sm font-medium mb-2">Kesehatan Mata</label>
+                    <input type="text" id="mcuMata" required class="input-field w-full px-4 py-2 border rounded-lg focus:outline-none" placeholder="Contoh: Sehat, Minus, Merah">
+                  </div>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label class="block text-sm font-medium mb-2">Kesehatan Telinga</label>
+                    <input type="text" id="mcuTelinga" required class="input-field w-full px-4 py-2 border rounded-lg focus:outline-none" placeholder="Contoh: Sehat, Kurang pendengaran">
+                  </div>
+                  <div>
+                    <label class="block text-sm font-medium mb-2">Kesehatan Gigi & Mulut</label>
+                    <input type="text" id="mcuGigi" required class="input-field w-full px-4 py-2 border rounded-lg focus:outline-none" placeholder="Contoh: Sehat, Karies, Karang gigi">
+                  </div>
+                </div>
+                
+                <button type="submit" id="mcuSubmitBtn" class="btn-primary px-6 py-3 rounded-lg text-white font-semibold">
+                  Simpan Data MCU
+                </button>
+              </form>
+            </div>
+            
+            <div class="card-shadow rounded-xl p-6" style="background: ${config.surface_color};">
+              <h3 class="text-lg font-semibold mb-4" style="color: ${config.text_color};">📜 Riwayat Medical Check Up</h3>
+              <div id="mcuList" class="space-y-4">
+                ${mcuRecords.length === 0 ? '<p class="text-center py-8 text-gray-500">❌ Belum ada data MCU</p>' : 
+                  mcuRecords.map(mcu => {
+                    const badgeClass = mcu.kategori_gizi === 'Normal' ? 'badge-normal' : 
+                                      mcu.kategori_gizi === 'Kurus' ? 'badge-kurus' : 
+                                      mcu.kategori_gizi === 'Gemuk' ? 'badge-gemuk' : 'badge-obesitas';
+                    return `
+                      <div class="border rounded-lg p-4">
+                        <div class="flex justify-between items-start mb-3">
+                          <div>
+                            <p class="font-semibold" style="color: ${config.primary_color};">${mcu.tanggal}</p>
+                            <p class="text-sm text-gray-600">Petugas: ${mcu.petugas}</p>
+                          </div>
+                          <span class="badge ${badgeClass}">${mcu.kategori_gizi}</span>
+                        </div>
+                        <div class="grid grid-cols-3 gap-4 mb-3">
+                          <div>
+                            <p class="text-xs text-gray-600">📏 Tinggi Badan</p>
+                            <p class="font-bold">${mcu.tinggi_badan} cm</p>
+                          </div>
+                          <div>
+                            <p class="text-xs text-gray-600">⚖️ Berat Badan</p>
+                            <p class="font-bold">${mcu.berat_badan} kg</p>
+                          </div>
+                          <div>
+                            <p class="text-xs text-gray-600">📊 IMT</p>
+                            <p class="font-bold">${mcu.imt}</p>
+                          </div>
+                        </div>
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-2 text-sm">
+                          <div class="flex items-center space-x-2">
+                            <span>🧴 Kulit:</span>
+                            <span class="font-medium">${mcu.kesehatan_kulit}</span>
+                          </div>
+                          <div class="flex items-center space-x-2">
+                            <span>👁️ Mata:</span>
+                            <span class="font-medium">${mcu.kesehatan_mata}</span>
+                          </div>
+                          <div class="flex items-center space-x-2">
+                            <span>👂 Telinga:</span>
+                            <span class="font-medium">${mcu.kesehatan_telinga}</span>
+                          </div>
+                          <div class="flex items-center space-x-2">
+                            <span>🦷 Gigi:</span>
+                            <span class="font-medium">${mcu.kesehatan_gigi}</span>
+                          </div>
+                        </div>
+                      </div>
+                    `;
+                  }).join('')
+                }
+              </div>
+            </div>
+          </div>
+          
+          <div id="tab-riwayat" class="tab-content hidden">
+            <div class="card-shadow rounded-xl p-6" style="background: ${config.surface_color};">
+              <h3 class="text-lg font-semibold mb-4" style="color: ${config.text_color};">Riwayat Layanan Kesehatan</h3>
+              ${layananRecords.length === 0 ? '<p class="text-center py-8 text-gray-500">Belum ada riwayat layanan</p>' :
+                `<div class="space-y-4">
+                  ${layananRecords.map(record => `
+                    <div class="border rounded-lg p-4">
+                      <div class="flex justify-between items-start mb-2">
+                        <p class="font-semibold" style="color: ${config.primary_color};">${record.tanggal}</p>
+                        <span class="text-sm text-gray-600">Petugas: ${record.petugas}</span>
+                      </div>
+                      <div class="space-y-2 text-sm">
+                        <div><span class="font-medium">Keluhan:</span> ${record.keluhan}</div>
+                        <div><span class="font-medium">Diagnosis:</span> ${record.diagnosis}</div>
+                        <div><span class="font-medium">Tindakan:</span> ${record.tindakan}</div>
+                      </div>
+                    </div>
+                  `).join('')}
+                </div>`
+              }
+            </div>
+          </div>
+        </div>
+      `;
+      
+      document.getElementById('mcuTanggal').valueAsDate = new Date();
+      
+      document.getElementById('mcuTinggi').addEventListener('input', calculateIMT);
+      document.getElementById('mcuBerat').addEventListener('input', calculateIMT);
+      
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+          const tabName = this.getAttribute('data-tab');
+          
+          document.querySelectorAll('.tab-btn').forEach(b => {
+            b.classList.remove('active');
+            b.style.borderColor = 'transparent';
+            b.style.color = '#6b7280';
+          });
+          
+          this.classList.add('active');
+          this.style.borderColor = config.primary_color;
+          this.style.color = config.primary_color;
+          
+          document.querySelectorAll('.tab-content').forEach(content => {
+            content.classList.add('hidden');
+          });
+          
+          document.getElementById(`tab-${tabName}`).classList.remove('hidden');
+        });
+      });
+      
+      document.getElementById('mcuForm').addEventListener('submit', (e) => handleMCUFormSubmit(e, student));
+      
+      modal.classList.add('active');
+      
+      modal.addEventListener('click', function(e) {
+        if (e.target === modal) {
+          closeStudentModal();
+        }
+      });
+    }
+
+    function calculateIMT() {
+      const tinggi = parseFloat(document.getElementById('mcuTinggi').value);
+      const berat = parseFloat(document.getElementById('mcuBerat').value);
+      
+      if (tinggi > 0 && berat > 0) {
+        const tinggiMeter = tinggi / 100;
+        const imt = (berat / (tinggiMeter * tinggiMeter)).toFixed(1);
+        document.getElementById('mcuIMT').value = imt;
+        
+        let kategori = '';
+        if (imt < 18.5) kategori = 'Kurus';
+        else if (imt >= 18.5 && imt < 25) kategori = 'Normal';
+        else if (imt >= 25 && imt < 30) kategori = 'Gemuk';
+        else kategori = 'Obesitas';
+        
+        document.getElementById('mcuKategori').value = kategori;
+      }
+    }
+
+    async function handleMCUFormSubmit(e, student) {
+      e.preventDefault();
+      
+      const submitBtn = document.getElementById('mcuSubmitBtn');
+      submitBtn.innerHTML = '<span class="loading"></span>';
+      submitBtn.disabled = true;
+      
+      const tanggalInput = document.getElementById('mcuTanggal').value;
+      const tanggalFormatted = formatDateToDDMMYYYY(tanggalInput);
+      
+      const record = {
+        type: 'mcu',
+        tanggal: tanggalFormatted,
+        nama_siswa: student.nama,
+        kelas: student.kelas,
+        petugas: document.getElementById('mcuPetugas').value,
+        tinggi_badan: parseFloat(document.getElementById('mcuTinggi').value),
+        berat_badan: parseFloat(document.getElementById('mcuBerat').value),
+        imt: parseFloat(document.getElementById('mcuIMT').value),
+        kategori_gizi: document.getElementById('mcuKategori').value,
+        kesehatan_kulit: document.getElementById('mcuKulit').value,
+        kesehatan_mata: document.getElementById('mcuMata').value,
+        kesehatan_telinga: document.getElementById('mcuTelinga').value,
+        kesehatan_gigi: document.getElementById('mcuGigi').value,
+        timestamp: Date.now()
+      };
+
+      if (allRecords.length >= 999) {
+        showNotification('Maksimum 999 catatan tercapai.', 'error');
+        submitBtn.innerHTML = 'Simpan Data MCU';
+        submitBtn.disabled = false;
+        return;
+      }
+
+      const result = await window.dataSdk.create(record);
+      
+      if (result.isOk) {
+        try {
+          await fetch('https://script.google.com/macros/s/AKfycbymYOvGzsiM9yexRD9b2C4Qyg58LDeqqBALErISqKUzSvGC3tsV6JcLDZHtF9CALzmB/exec', {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              tanggal: record.tanggal,
+              nama_siswa: record.nama_siswa,
+              kelas: record.kelas,
+              petugas: record.petugas,
+              tinggi_badan: record.tinggi_badan,
+              berat_badan: record.berat_badan,
+              imt: record.imt,
+              kategori_gizi: record.kategori_gizi,
+              kesehatan_kulit: record.kesehatan_kulit,
+              kesehatan_mata: record.kesehatan_mata,
+              kesehatan_telinga: record.kesehatan_telinga,
+              kesehatan_gigi: record.kesehatan_gigi
+            })
+          });
+        } catch (error) {
+          console.log('Google Sheets sync:', error);
+        }
+        
+        showNotification('Data MCU berhasil disimpan!', 'success');
+        
+        // Update modal dengan data terbaru
+        setTimeout(() => {
+          const kelasNamaKey = `${student.kelas}|${student.nama}`;
+          openStudentDetail(kelasNamaKey);
+        }, 500);
+      } else {
+        showNotification('Gagal menyimpan data MCU.', 'error');
+      }
+      
+      submitBtn.innerHTML = 'Simpan Data MCU';
+      submitBtn.disabled = false;
+    }
+
+    function closeStudentModal() {
+      const modal = document.getElementById('studentModal');
+      modal.classList.remove('active');
+    }
+
+    function renderRujukan(contentDiv) {
+      const classes = getUniqueClasses();
+      const students = getFilteredStudents();
+      
+      contentDiv.innerHTML = `
+        <div class="fade-in">
+          <h2 class="text-3xl font-bold mb-6" style="color: ${config.primary_color};">Rujukan Medis</h2>
+          
+          <div class="card-shadow rounded-xl p-6 mb-6" style="background: ${config.surface_color};">
+            <h3 class="text-xl font-semibold mb-4" style="color: ${config.text_color};">Buat Surat Rujukan</h3>
+            <form id="rujukanForm" class="space-y-4" onkeydown="return event.key !== 'Enter';">
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label class="block text-sm font-medium mb-2" style="color: ${config.text_color};">Kelas</label>
+                  <select id="rujukanKelas" required class="input-field w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none">
+                    <option value="">Pilih Kelas</option>
+                    ${classes.map(c => `<option value="${c}">${c}</option>`).join('')}
+                  </select>
+                </div>
+                <div>
+                  <label class="block text-sm font-medium mb-2" style="color: ${config.text_color};">Nama Santri</label>
+                  <select id="rujukanNama" required class="input-field w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none">
+                    <option value="">Pilih Santri</option>
+                  </select>
+                </div>
+              </div>
+              
+              <div>
+                <label class="block text-sm font-medium mb-2" style="color: ${config.text_color};">Keluhan & Diagnosis Sementara</label>
+                <textarea id="rujukanKeluhan" required rows="3" class="input-field w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none"></textarea>
+              </div>
+              
+              <div>
+                <label class="block text-sm font-medium mb-2" style="color: ${config.text_color};">Tindakan Awal</label>
+                <textarea id="rujukanTindakan" required rows="3" class="input-field w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none"></textarea>
+              </div>
+              
+              <div>
+                <label class="block text-sm font-medium mb-2" style="color: ${config.text_color};">Alasan Rujukan</label>
+                <select id="rujukanAlasan" required class="input-field w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none">
+                  <option value="">Pilih Alasan</option>
+                  <option value="Darurat">Darurat</option>
+                  <option value="Lanjutan">Lanjutan</option>
+                  <option value="Spesialis">Spesialis</option>
+                </select>
+              </div>
+              
+              <div>
+                <label class="block text-sm font-medium mb-2" style="color: ${config.text_color};">Tujuan Rujukan</label>
+                <input type="text" id="rujukanTujuan" required class="input-field w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none" placeholder="Contoh: Puskesmas Terdekat, Rumah Sakit Rujukan, dll">
+              </div>
+              
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label class="block text-sm font-medium mb-2" style="color: ${config.text_color};">Tanggal</label>
+                  <input type="date" id="rujukanTanggal" required class="input-field w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none">
+                </div>
+                <div>
+                  <label class="block text-sm font-medium mb-2" style="color: ${config.text_color};">Jam</label>
+                  <input type="time" id="rujukanJam" required class="input-field w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none">
+                </div>
+              </div>
+              
+              <div>
+                <label class="block text-sm font-medium mb-2" style="color: ${config.text_color};">Petugas</label>
+                <input type="text" id="rujukanPetugas" ${currentUser.peran === "Musyrif" || currentUser.peran === "Musyrifah" ? '' : 'readonly'} class="input-field w-full px-4 py-2 border border-gray-300 rounded-lg ${currentUser.peran === "Musyrif" || currentUser.peran === "Musyrifah" ? '' : 'bg-gray-50'}" value="${currentUser.peran === "Musyrif" || currentUser.peran === "Musyrifah" ? '' : currentUser.nama}" placeholder="${currentUser.peran === "Musyrif" || currentUser.peran === "Musyrifah" ? 'Ketik nama petugas' : ''}" required>
+              </div>
+              
+              <button type="submit" id="rujukanSubmitBtn" class="btn-primary px-6 py-3 rounded-lg text-white font-semibold">
+                Buat Surat Rujukan
+              </button>
+            </form>
+          </div>
+          
+          <div id="suratRujukan" class="hidden mt-6 card-shadow rounded-xl p-6" style="background: ${config.surface_color};"></div>
+          
+          <div class="card-shadow rounded-xl p-6 mt-6" style="background: ${config.surface_color};">
+            <h3 class="text-xl font-semibold mb-4" style="color: ${config.text_color};">Riwayat Rujukan</h3>
+            
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
+              <div>
+                <label class="block text-sm font-medium mb-2" style="color: ${config.text_color};">Dari Tanggal</label>
+                <input type="date" id="filterRujukanDariTanggal" class="input-field w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none">
+              </div>
+              <div>
+                <label class="block text-sm font-medium mb-2" style="color: ${config.text_color};">Sampai Tanggal</label>
+                <input type="date" id="filterRujukanSampaiTanggal" class="input-field w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none">
+              </div>
+              <div>
+                <label class="block text-sm font-medium mb-2" style="color: ${config.text_color};">Kelas</label>
+                <select id="filterRujukanKelas" class="input-field w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none">
+                  <option value="">Semua Kelas</option>
+                  ${classes.map(c => `<option value="${c}">${c}</option>`).join('')}
+                </select>
+              </div>
+              <div>
+                <label class="block text-sm font-medium mb-2" style="color: ${config.text_color};">Nama</label>
+                <input type="text" id="filterRujukanNama" placeholder="Cari nama..." class="input-field w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none">
+              </div>
+            </div>
+            
+            <div class="flex space-x-2 mb-4">
+              <button id="refreshRujukanBtn" class="btn-primary px-4 py-2 rounded-lg text-white font-semibold">
+                🔄 Refresh
+              </button>
+              <button id="resetRujukanFilterBtn" class="px-4 py-2 rounded-lg border border-gray-300" style="color: ${config.text_color};">
+                Reset Filter
+              </button>
+            </div>
+            
+            <div id="rujukanList" class="table-container"></div>
+          </div>
+        </div>
+      `;
+
+      document.getElementById('rujukanTanggal').valueAsDate = new Date();
+      document.getElementById('rujukanJam').value = new Date().toTimeString().slice(0, 5);
+      
+      document.getElementById('rujukanKelas').addEventListener('change', function() {
+        const selectedClass = this.value;
+        const rujukanNamaSelect = document.getElementById('rujukanNama');
+        const filteredStudents = students.filter(s => s.kelas === selectedClass);
+        
+        rujukanNamaSelect.innerHTML = '<option value="">Pilih Santri</option>' + 
+          filteredStudents.map(s => `<option value="${s.nama}">${s.nama}</option>`).join('');
+      });
+      
+      document.getElementById('rujukanForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        generateSuratRujukan();
+      });
+      
+      document.getElementById('filterRujukanDariTanggal').addEventListener('change', displayRujukanHistory);
+      document.getElementById('filterRujukanSampaiTanggal').addEventListener('change', displayRujukanHistory);
+      document.getElementById('filterRujukanKelas').addEventListener('change', displayRujukanHistory);
+      document.getElementById('filterRujukanNama').addEventListener('input', displayRujukanHistory);
+      document.getElementById('refreshRujukanBtn').addEventListener('click', async function() {
+        this.innerHTML = '<span class="loading"></span>';
+        this.disabled = true;
+        await loadRujukanFromCSV();
+        displayRujukanHistory();
+        this.innerHTML = '🔄 Refresh';
+        this.disabled = false;
+      });
+      document.getElementById('resetRujukanFilterBtn').addEventListener('click', resetRujukanFilters);
+      
+      displayRujukanHistory();
+    }
+
+    function displayRujukanHistory() {
+      const rujukanList = document.getElementById('rujukanList');
+      if (!rujukanList) return;
+      
+      const dariTanggal = document.getElementById('filterRujukanDariTanggal')?.value || '';
+      const sampaiTanggal = document.getElementById('filterRujukanSampaiTanggal')?.value || '';
+      const filterKelas = document.getElementById('filterRujukanKelas')?.value || '';
+      const filterNama = document.getElementById('filterRujukanNama')?.value.toLowerCase() || '';
+      
+      let allRujukan = [...rujukanFromSheet];
+      
+      if (dariTanggal) {
+        const dariFormatted = formatDateToDDMMYYYY(dariTanggal);
+        allRujukan = allRujukan.filter(r => {
+          const recordDate = r.tanggal.split('/').reverse().join('');
+          const filterDate = dariFormatted.split('/').reverse().join('');
+          return recordDate >= filterDate;
+        });
+      }
+      if (sampaiTanggal) {
+        const sampaiFormatted = formatDateToDDMMYYYY(sampaiTanggal);
+        allRujukan = allRujukan.filter(r => {
+          const recordDate = r.tanggal.split('/').reverse().join('');
+          const filterDate = sampaiFormatted.split('/').reverse().join('');
+          return recordDate <= filterDate;
+        });
+      }
+      if (filterKelas) {
+        allRujukan = allRujukan.filter(r => r.kelas === filterKelas);
+      }
+      if (filterNama) {
+        allRujukan = allRujukan.filter(r => r.nama_siswa.toLowerCase().includes(filterNama));
+      }
+      
+      const sortedRujukan = allRujukan.sort((a, b) => b.timestamp - a.timestamp);
+      
+      if (sortedRujukan.length === 0) {
+        rujukanList.innerHTML = `<p class="text-center py-8 text-gray-500">Belum ada riwayat rujukan</p>`;
+        return;
+      }
+      
+      rujukanList.innerHTML = `
+        <div class="mb-4 p-4 rounded-lg" style="background: rgba(59, 174, 160, 0.1);">
+          <p class="text-center font-semibold" style="color: ${config.secondary_color};">
+            📊 Menampilkan ${sortedRujukan.length} data rujukan dari ${filterKelas ? 'kelas ' + filterKelas : 'SEMUA kelas'}
+          </p>
+        </div>
+        <table class="w-full">
+          <thead>
+            <tr>
+              <th>Tanggal</th>
+              <th>Jam</th>
+              <th>Kelas</th>
+              <th>Nama Santri</th>
+              <th>Keluhan</th>
+              <th>Tindakan</th>
+              <th>Alasan</th>
+              <th>Tujuan</th>
+              <th>Petugas</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${sortedRujukan.map(record => `
+              <tr>
+                <td>${record.tanggal}</td>
+                <td>${record.jam}</td>
+                <td>${record.kelas}</td>
+                <td>${record.nama_siswa}</td>
+                <td>${record.keluhan}</td>
+                <td>${record.tindakan}</td>
+                <td>${record.alasan}</td>
+                <td>${record.tujuan}</td>
+                <td>${record.petugas}</td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      `;
+    }
+
+    function resetRujukanFilters() {
+      if (document.getElementById('filterRujukanDariTanggal')) document.getElementById('filterRujukanDariTanggal').value = '';
+      if (document.getElementById('filterRujukanSampaiTanggal')) document.getElementById('filterRujukanSampaiTanggal').value = '';
+      if (document.getElementById('filterRujukanKelas')) document.getElementById('filterRujukanKelas').value = '';
+      if (document.getElementById('filterRujukanNama')) document.getElementById('filterRujukanNama').value = '';
+      displayRujukanHistory();
+    }
+
+    async function generateSuratRujukan() {
+      const submitBtn = document.getElementById('rujukanSubmitBtn');
+      submitBtn.innerHTML = '<span class="loading"></span>';
+      submitBtn.disabled = true;
+      
+      const kelas = document.getElementById('rujukanKelas').value;
+      const nama = document.getElementById('rujukanNama').value;
+      const keluhan = document.getElementById('rujukanKeluhan').value;
+      const tindakan = document.getElementById('rujukanTindakan').value;
+      const alasan = document.getElementById('rujukanAlasan').value;
+      const tujuan = document.getElementById('rujukanTujuan').value;
+      const tanggalInput = document.getElementById('rujukanTanggal').value;
+      const tanggal = formatDateToDDMMYYYY(tanggalInput);
+      const jam = document.getElementById('rujukanJam').value;
+      const petugas = document.getElementById('rujukanPetugas').value;
+      
+      try {
+        await fetch('https://script.google.com/macros/s/AKfycbwPDdOLknusI09H-2TvLmoVLuojTc_QcpQ-JVfVSasE99jlnU3a0K9bkFyCAYNfVrw/exec', {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            tanggal: tanggal,
+            jam: jam,
+            kelas: kelas,
+            nama_santri: nama,
+            keluhan: keluhan,
+            tindakan: tindakan,
+            alasan: alasan,
+            tujuan: tujuan,
+            petugas: petugas
+          })
+        });
+        
+        showNotification('Surat rujukan berhasil disimpan!', 'success');
+      } catch (error) {
+        console.log('Google Sheets sync:', error);
+      }
+      
+      const suratDiv = document.getElementById('suratRujukan');
+      suratDiv.classList.remove('hidden');
+      
+      suratDiv.innerHTML = `
+        <div id="suratContent" class="max-w-3xl mx-auto">
+          <div class="text-center mb-6">
+            <h2 class="text-2xl font-bold" style="color: ${config.primary_color};">${config.school_name}</h2>
+            <h3 class="text-xl font-semibold mt-2" style="color: ${config.text_color};">SURAT RUJUKAN MEDIS</h3>
+          </div>
+          
+          <div class="space-y-4 mb-6">
+            <div class="grid grid-cols-3">
+              <span class="font-medium">Kelas</span>
+              <span class="col-span-2">: ${kelas}</span>
+            </div>
+            <div class="grid grid-cols-3">
+              <span class="font-medium">Nama Santri</span>
+              <span class="col-span-2">: ${nama}</span>
+            </div>
+            <div class="grid grid-cols-3">
+              <span class="font-medium">Tanggal & Jam</span>
+              <span class="col-span-2">: ${tanggal} ${jam}</span>
+            </div>
+            <div class="grid grid-cols-3">
+              <span class="font-medium">Keluhan</span>
+              <span class="col-span-2">: ${keluhan}</span>
+            </div>
+            <div class="grid grid-cols-3">
+              <span class="font-medium">Tindakan Awal</span>
+              <span class="col-span-2">: ${tindakan}</span>
+            </div>
+            <div class="grid grid-cols-3">
+              <span class="font-medium">Alasan Rujukan</span>
+              <span class="col-span-2">: ${alasan}</span>
+            </div>
+            <div class="grid grid-cols-3">
+              <span class="font-medium">Tujuan Rujukan</span>
+              <span class="col-span-2">: ${tujuan}</span>
+            </div>
+          </div>
+          
+          <div class="text-right mt-8">
+            <p>Petugas UKS,</p>
+            <p class="mt-16 font-semibold">${petugas}</p>
+          </div>
+        </div>
+        
+        <div class="text-center mt-6">
+          <button onclick="window.print()" class="btn-primary px-6 py-3 rounded-lg text-white font-semibold">
+            Cetak Surat
+          </button>
+        </div>
+      `;
+      
+      submitBtn.innerHTML = 'Buat Surat Rujukan';
+      submitBtn.disabled = false;
+    }
+
+    function renderLaporan(contentDiv) {
+      contentDiv.innerHTML = `
+        <div class="fade-in">
+          <div class="mb-6">
+            <h2 class="text-3xl font-bold" style="color: ${config.primary_color};">Laporan & Statistik</h2>
+          </div>
+          
+          <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
+            <div class="card-shadow rounded-xl p-6" style="background: ${config.surface_color};">
+              <div class="flex items-center justify-between">
+                <div>
+                  <p class="text-gray-600 text-sm">Total Layanan</p>
+                  <p class="text-3xl font-bold mt-2" style="color: ${config.primary_color};" id="totalLayanan">0</p>
+                </div>
+                <div class="w-14 h-14 rounded-full flex items-center justify-center text-3xl" style="background: rgba(10, 36, 99, 0.1);">
+                  🏥
+                </div>
+              </div>
+            </div>
+            
+            <div class="card-shadow rounded-xl p-6" style="background: ${config.surface_color};">
+              <div class="flex items-center justify-between">
+                <div>
+                  <p class="text-gray-600 text-sm">Total MCU</p>
+                  <p class="text-3xl font-bold mt-2" style="color: ${config.secondary_color};" id="totalMCU">0</p>
+                </div>
+                <div class="w-14 h-14 rounded-full flex items-center justify-center text-3xl" style="background: rgba(59, 174, 160, 0.1);">
+                  📋
+                </div>
+              </div>
+            </div>
+            
+            <div class="card-shadow rounded-xl p-6" style="background: ${config.surface_color};">
+              <div class="flex items-center justify-between">
+                <div>
+                  <p class="text-gray-600 text-sm">Total Rujukan</p>
+                  <p class="text-3xl font-bold mt-2" style="color: ${config.primary_color};" id="totalRujukan">0</p>
+                </div>
+                <div class="w-14 h-14 rounded-full flex items-center justify-center text-3xl" style="background: rgba(10, 36, 99, 0.1);">
+                  🚑
+                </div>
+              </div>
+            </div>
+            
+            <div class="card-shadow rounded-xl p-6" style="background: ${config.surface_color};">
+              <div class="flex items-center justify-between">
+                <div>
+                  <p class="text-gray-600 text-sm">Layanan Hari Ini</p>
+                  <p class="text-3xl font-bold mt-2" style="color: ${config.secondary_color};" id="layananHariIni">0</p>
+                </div>
+                <div class="w-14 h-14 rounded-full flex items-center justify-center text-3xl" style="background: rgba(59, 174, 160, 0.1);">
+                  📅
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="card-shadow rounded-xl p-6 mb-6" style="background: ${config.surface_color};">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+              <div>
+                <label class="block text-sm font-medium mb-2" style="color: ${config.text_color};">Dari Tanggal</label>
+                <input type="date" id="statDariTanggal" class="input-field w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none">
+              </div>
+              <div>
+                <label class="block text-sm font-medium mb-2" style="color: ${config.text_color};">Sampai Tanggal</label>
+                <input type="date" id="statSampaiTanggal" class="input-field w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none">
+              </div>
+              <div>
+                <label class="block text-sm font-medium mb-2" style="color: ${config.text_color};">Kelas</label>
+                <select id="statFilterKelas" class="input-field w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none">
+                  <option value="">Semua Kelas</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-sm font-medium mb-2" style="color: ${config.text_color};">Nama</label>
+                <input type="text" id="statFilterNama" placeholder="Cari nama..." class="input-field w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none">
+              </div>
+            </div>
+            <div class="mt-4">
+              <button id="resetStatFilterBtn" class="px-4 py-2 rounded-lg border border-gray-300" style="color: ${config.text_color};">
+                Reset Filter
+              </button>
+            </div>
+          </div>
+          
+          <div class="card-shadow rounded-xl p-6" style="background: ${config.surface_color};">
+            <div class="flex justify-between items-center mb-6 border-b">
+              <div class="flex space-x-2">
+                <button class="laporan-tab-btn active px-6 py-3 font-semibold border-b-2" data-tab="layanan" style="border-color: ${config.primary_color}; color: ${config.primary_color};">
+                  Data Layanan
+                </button>
+                <button class="laporan-tab-btn px-6 py-3 font-semibold text-gray-500" data-tab="mcu">
+                  Data MCU
+                </button>
+              </div>
+              <button id="refreshStatsBtn" class="px-4 py-2 rounded-lg border" style="border-color: ${config.primary_color}; color: ${config.primary_color};">
+                🔄 Refresh Data
+              </button>
+            </div>
+            
+            <div id="laporan-tab-layanan" class="laporan-tab-content">
+              <div class="mb-4">
+                <h3 class="text-xl font-semibold" style="color: ${config.text_color};">Data Layanan</h3>
+              </div>
+              <div id="statsTableLayanan" class="table-container"></div>
+            </div>
+            
+            <div id="laporan-tab-mcu" class="laporan-tab-content hidden">
+              <div class="mb-4">
+                <h3 class="text-xl font-semibold" style="color: ${config.text_color};">Data MCU</h3>
+              </div>
+              <div id="statsTableMCU" class="table-container"></div>
+            </div>
+          </div>
+        </div>
+      `;
+
+      document.getElementById('refreshStatsBtn').addEventListener('click', async function() {
+        this.innerHTML = '<span class="loading"></span>';
+        this.disabled = true;
+        await loadLayananFromCSV();
+        await loadMCUFromCSV();
+        displayStatistics();
+        this.innerHTML = '🔄 Refresh Data';
+        this.disabled = false;
+      });
+      document.getElementById('resetStatFilterBtn').addEventListener('click', () => {
+        document.getElementById('statDariTanggal').value = '';
+        document.getElementById('statSampaiTanggal').value = '';
+        document.getElementById('statFilterKelas').value = '';
+        document.getElementById('statFilterNama').value = '';
+        displayStatistics();
+      });
+      
+      document.getElementById('statDariTanggal').addEventListener('change', displayStatistics);
+      document.getElementById('statSampaiTanggal').addEventListener('change', displayStatistics);
+      document.getElementById('statFilterKelas').addEventListener('change', displayStatistics);
+      document.getElementById('statFilterNama').addEventListener('input', displayStatistics);
+      
+      document.querySelectorAll('.laporan-tab-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+          const tabName = this.getAttribute('data-tab');
+          
+          document.querySelectorAll('.laporan-tab-btn').forEach(b => {
+            b.classList.remove('active');
+            b.style.borderColor = 'transparent';
+            b.style.color = '#6b7280';
+          });
+          
+          this.classList.add('active');
+          this.style.borderColor = config.primary_color;
+          this.style.color = config.primary_color;
+          
+          document.querySelectorAll('.laporan-tab-content').forEach(content => {
+            content.classList.add('hidden');
+          });
+          
+          document.getElementById(`laporan-tab-${tabName}`).classList.remove('hidden');
+        });
+      });
+      
+      const allClasses = [...new Set(studentsData.map(s => s.kelas))].sort();
+      const kelasSelect = document.getElementById('statFilterKelas');
+      kelasSelect.innerHTML = '<option value="">Semua Kelas</option>' + 
+        allClasses.map(c => `<option value="${c}">${c}</option>`).join('');
+      
+      displayStatistics();
+    }
+
+    function displayStatistics() {
+      const dariTanggal = document.getElementById('statDariTanggal')?.value || '';
+      const sampaiTanggal = document.getElementById('statSampaiTanggal')?.value || '';
+      const filterKelas = document.getElementById('statFilterKelas')?.value || '';
+      const filterNama = document.getElementById('statFilterNama')?.value.toLowerCase() || '';
+      
+      // Hanya gunakan data dari spreadsheet
+      const allLayanan = [...layananFromSheet];
+      
+      const allMCU = [...mcuFromSheet];
+      const mcuRecords = allMCU;
+      
+      let filteredLayanan = [...allLayanan];
+      let filteredMCU = [...allMCU];
+      
+      if (dariTanggal) {
+        const dariFormatted = formatDateToDDMMYYYY(dariTanggal);
+        filteredLayanan = filteredLayanan.filter(r => {
+          const recordDate = r.tanggal.split('/').reverse().join('');
+          const filterDate = dariFormatted.split('/').reverse().join('');
+          return recordDate >= filterDate;
+        });
+        filteredMCU = filteredMCU.filter(r => {
+          const recordDate = r.tanggal.split('/').reverse().join('');
+          const filterDate = dariFormatted.split('/').reverse().join('');
+          return recordDate >= filterDate;
+        });
+      }
+      if (sampaiTanggal) {
+        const sampaiFormatted = formatDateToDDMMYYYY(sampaiTanggal);
+        filteredLayanan = filteredLayanan.filter(r => {
+          const recordDate = r.tanggal.split('/').reverse().join('');
+          const filterDate = sampaiFormatted.split('/').reverse().join('');
+          return recordDate <= filterDate;
+        });
+        filteredMCU = filteredMCU.filter(r => {
+          const recordDate = r.tanggal.split('/').reverse().join('');
+          const filterDate = sampaiFormatted.split('/').reverse().join('');
+          return recordDate <= filterDate;
+        });
+      }
+      if (filterKelas) {
+        filteredLayanan = filteredLayanan.filter(r => r.kelas === filterKelas);
+        filteredMCU = filteredMCU.filter(r => r.kelas === filterKelas);
+      }
+      if (filterNama) {
+        filteredLayanan = filteredLayanan.filter(r => r.nama_siswa.toLowerCase().includes(filterNama));
+        filteredMCU = filteredMCU.filter(r => r.nama_siswa.toLowerCase().includes(filterNama));
+      }
+      
+      const totalLayananEl = document.getElementById('totalLayanan');
+      const totalMCUEl = document.getElementById('totalMCU');
+      const totalRujukanEl = document.getElementById('totalRujukan');
+      const layananHariIniEl = document.getElementById('layananHariIni');
+      
+      if (totalLayananEl) totalLayananEl.textContent = allLayanan.length;
+      if (totalMCUEl) totalMCUEl.textContent = mcuRecords.length;
+      
+      if (totalRujukanEl) totalRujukanEl.textContent = rujukanFromSheet.length;
+      
+      const today = new Date();
+      const todayFormatted = `${String(today.getDate()).padStart(2, '0')}/${String(today.getMonth() + 1).padStart(2, '0')}/${today.getFullYear()}`;
+      const todayRecords = allLayanan.filter(r => r.tanggal === todayFormatted);
+      if (layananHariIniEl) layananHariIniEl.textContent = todayRecords.length;
+      
+      const statsTableLayanan = document.getElementById('statsTableLayanan');
+      if (statsTableLayanan) {
+        const sortedLayanan = filteredLayanan.sort((a, b) => b.timestamp - a.timestamp);
+        
+        statsTableLayanan.innerHTML = `
+          <div class="mb-4 p-4 rounded-lg" style="background: rgba(59, 174, 160, 0.1);">
+            <p class="text-center font-semibold" style="color: ${config.secondary_color};">
+              📊 Menampilkan ${sortedLayanan.length} data layanan dari ${filterKelas ? 'kelas ' + filterKelas : 'SEMUA kelas dan SEMUA santri'}
+            </p>
+          </div>
+          <table class="w-full" id="dataTableLayanan">
+            <thead>
+              <tr>
+                <th>No</th>
+                <th>Tanggal</th>
+                <th>Kelas</th>
+                <th>Nama Santri</th>
+                <th>Keluhan</th>
+                <th>Diagnosis</th>
+                <th>Tindakan</th>
+                <th>Petugas</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${sortedLayanan.length > 0 ? sortedLayanan.map((record, index) => `
+                <tr>
+                  <td>${index + 1}</td>
+                  <td>${record.tanggal}</td>
+                  <td>${record.kelas}</td>
+                  <td>${record.nama_siswa}</td>
+                  <td>${record.keluhan}</td>
+                  <td>${record.diagnosis}</td>
+                  <td>${record.tindakan}</td>
+                  <td>${record.petugas}</td>
+                </tr>
+              `).join('') : '<tr><td colspan="8" class="text-center py-8 text-gray-500">Tidak ada data</td></tr>'}
+            </tbody>
+          </table>
+        `;
+      }
+      
+      const statsTableMCU = document.getElementById('statsTableMCU');
+      if (statsTableMCU) {
+        const sortedMCU = filteredMCU.sort((a, b) => b.timestamp - a.timestamp);
+        
+        statsTableMCU.innerHTML = `
+          <div class="mb-4 p-4 rounded-lg" style="background: rgba(59, 174, 160, 0.1);">
+            <p class="text-center font-semibold" style="color: ${config.secondary_color};">
+              📊 Menampilkan ${sortedMCU.length} data MCU dari ${filterKelas ? 'kelas ' + filterKelas : 'SEMUA kelas dan SEMUA santri'}
+            </p>
+          </div>
+          <table class="w-full" id="dataTableMCU">
+            <thead>
+              <tr>
+                <th>No</th>
+                <th>Tanggal</th>
+                <th>Kelas</th>
+                <th>Nama Santri</th>
+                <th>Tinggi (cm)</th>
+                <th>Berat (kg)</th>
+                <th>IMT</th>
+                <th>Kategori Gizi</th>
+                <th>Kulit</th>
+                <th>Mata</th>
+                <th>Telinga</th>
+                <th>Gigi & Mulut</th>
+                <th>Petugas</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${sortedMCU.length > 0 ? sortedMCU.map((record, index) => `
+                <tr>
+                  <td>${index + 1}</td>
+                  <td>${record.tanggal}</td>
+                  <td>${record.kelas}</td>
+                  <td>${record.nama_siswa}</td>
+                  <td>${record.tinggi_badan}</td>
+                  <td>${record.berat_badan}</td>
+                  <td>${record.imt}</td>
+                  <td>${record.kategori_gizi}</td>
+                  <td>${record.kesehatan_kulit}</td>
+                  <td>${record.kesehatan_mata}</td>
+                  <td>${record.kesehatan_telinga}</td>
+                  <td>${record.kesehatan_gigi}</td>
+                  <td>${record.petugas}</td>
+                </tr>
+              `).join('') : '<tr><td colspan="13" class="text-center py-8 text-gray-500">Tidak ada data</td></tr>'}
+            </tbody>
+          </table>
+        `;
+      }
+    }
+
+    const dataHandler = {
+      onDataChanged(data) {
+        allRecords = data;
+        
+        if (currentMenu === 'layanan') {
+          displayRecords();
+        } else if (currentMenu === 'mcu') {
+          displayStudents();
+        } else if (currentMenu === 'laporan') {
+          displayStatistics();
+        }
+      }
+    };
+
+    async function onConfigChange(newConfig) {
+      config = { ...config, ...newConfig };
+      
+      const appDiv = document.getElementById('app');
+      if (!appDiv) return;
+      
+      if (!currentUser) {
+        renderLoginPage();
+      } else {
+        renderMainApp();
+      }
+    }
+
+    async function init() {
+      if (window.dataSdk) {
+        const initResult = await window.dataSdk.init(dataHandler);
+        if (!initResult.isOk) {
+          console.error("Failed to initialize data SDK");
+        }
+      }
+
+      if (window.elementSdk) {
+        await window.elementSdk.init({
+          defaultConfig,
+          onConfigChange,
+          mapToCapabilities: (config) => ({
+            recolorables: [
+              {
+                get: () => config.primary_color || defaultConfig.primary_color,
+                set: (value) => {
+                  config.primary_color = value;
+                  window.elementSdk.setConfig({ primary_color: value });
+                }
+              },
+              {
+                get: () => config.secondary_color || defaultConfig.secondary_color,
+                set: (value) => {
+                  config.secondary_color = value;
+                  window.elementSdk.setConfig({ secondary_color: value });
+                }
+              },
+              {
+                get: () => config.background_color || defaultConfig.background_color,
+                set: (value) => {
+                  config.background_color = value;
+                  window.elementSdk.setConfig({ background_color: value });
+                }
+              },
+              {
+                get: () => config.text_color || defaultConfig.text_color,
+                set: (value) => {
+                  config.text_color = value;
+                  window.elementSdk.setConfig({ text_color: value });
+                }
+              },
+              {
+                get: () => config.surface_color || defaultConfig.surface_color,
+                set: (value) => {
+                  config.surface_color = value;
+                  window.elementSdk.setConfig({ surface_color: value });
+                }
+              }
+            ],
+            borderables: [],
+            fontEditable: undefined,
+            fontSizeable: undefined
+          }),
+          mapToEditPanelValues: (config) => new Map([
+            ["app_title", config.app_title || defaultConfig.app_title],
+            ["school_name", config.school_name || defaultConfig.school_name]
+          ])
+        });
+      }
+
+      renderLoginPage();
+      
+      // Auto-refresh data dari spreadsheet setiap 30 detik (tanpa notifikasi)
+      setInterval(async () => {
+        if (currentUser) {
+          await loadLayananFromCSV(false);
+          await loadMCUFromCSV(false);
+          await loadRujukanFromCSV(false);
+          
+          // Update tampilan sesuai menu aktif
+          if (currentMenu === 'layanan') {
+            displayRecords();
+          } else if (currentMenu === 'mcu') {
+            displayStudents();
+          } else if (currentMenu === 'rujukan') {
+            displayRujukanHistory();
+          } else if (currentMenu === 'laporan') {
+            displayStatistics();
+          }
+        }
+      }, 30000); // 30 detik
+    }
+
+    init();
+  </script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9c40332642a7e793',t:'MTc2OTQzMjQ5NS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
