@@ -1110,7 +1110,17 @@
       try {
         const response = await fetch('https://docs.google.com/spreadsheets/d/e/2PACX-1vTqFEcX2Dcpzo4SN1Cu-TCtkrae7qAzjKQ8WF9axNxQdovls_RtSdNdT4BP1C_MHTL1z17iDHfoklMJ/pub?gid=269042976&single=true&output=csv');
         const csv = await response.text();
-        mcuData = parseCSV(csv);
+        const parsed = parseCSV(csv);
+
+        // Deduplicate: Keep latest entry per nama
+        const uniqueMcuMap = new Map();
+        parsed.forEach(item => {
+          if (item.nama) {
+            uniqueMcuMap.set(item.nama.toLowerCase(), item);
+          }
+        });
+        mcuData = Array.from(uniqueMcuMap.values());
+
         return mcuData;
       } catch (error) {
         console.error('Error fetching MCU:', error);
@@ -2683,13 +2693,11 @@
                 }
 
                 .page-footer {
-                  position: fixed;
-                  bottom: 0;
-                  right: 0;
                   width: 100%;
                   font-size: 8pt;
                   color: #666;
                   text-align: right;
+                  padding-top: 10px;
                 }
 
                 .page-footer-space {
@@ -3025,13 +3033,11 @@
                 }
 
                 .page-footer {
-                  position: fixed;
-                  bottom: 0;
-                  right: 0;
                   width: 100%;
                   font-size: 8pt;
                   color: #666;
                   text-align: right;
+                  padding-top: 10px;
                 }
 
                 .page-footer-space {
