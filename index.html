@@ -2610,6 +2610,7 @@
 
         const headTitle = printHead.includes('Heri') ? 'Kepala Sekolah' : 'Kepala Madrasah';
         const satPendidikan = printHead.includes('Heri') ? 'SMP Islam Al-Umm' : 'MA Al-Umm Malang';
+        const headerEmail = printHead.includes('Heri') ? 'smpi.alumm@gmail.com' : 'maalummmalang@gmail.com';
 
         const printWindow = window.open('', '', 'width=900,height=1000');
 
@@ -2694,7 +2695,7 @@
                         <div class="line1">YAYASAN BINA AL MUJTAMA’ (YBM)</div>
                         <div class="line2">PONDOK PESANTREN ${printHead.includes('Heri') ? '(SMP ISLAM)' : '(MA)'} AL-UMM MALANG</div>
                         <div class="line3">Jl. Joyo Agung, No.1 Merjosari, Lowokwaru, Kota Malang</div>
-                        <div class="line4">Telp. (0341) 576226 | pesantrenalumm.malang@gmail.com | <span style="letter-spacing: -0.5px;">www.pesantrenalumm.sch.id</span></div>
+                        <div class="line4">Telp. (0341) 576226 | ${headerEmail} | <span style="letter-spacing: -0.5px;">www.pesantrenalumm.sch.id</span></div>
                       </div>
                       <img src="https://iili.io/fENwpbp.png" class="header-logo" alt="Logo Pesantren">
                     </div>
@@ -3147,6 +3148,7 @@
 
         const headTitle = printHead.includes('Heri') ? 'Kepala Sekolah' : 'Kepala Madrasah';
         const satPendidikan = printHead.includes('Heri') ? 'SMP Islam Al-Umm' : 'MA Al-Umm Malang';
+        const headerEmail = printHead.includes('Heri') ? 'smpi.alumm@gmail.com' : 'maalummmalang@gmail.com';
 
         // Get layanan data for this student
         const layananDataForStudent = getLayananDataForStudent(rapor.nama);
@@ -3439,7 +3441,7 @@
                       <div class="line1">YAYASAN BINA AL MUJTAMA’ (YBM)</div>
                       <div class="line2">PONDOK PESANTREN ${printHead.includes('Heri') ? '(SMP ISLAM)' : '(MA)'} AL-UMM MALANG</div>
                       <div class="line3">Jl. Joyo Agung, No.1 Merjosari, Lowokwaru, Kota Malang</div>
-                      <div class="line4">Telp. (0341) 576226 | pesantrenalumm.malang@gmail.com | www.pesantrenalumm.sch.id</div>
+                      <div class="line4">Telp. (0341) 576226 | ${headerEmail} | www.pesantrenalumm.sch.id</div>
                     </div>
                     <img src="https://iili.io/fENwpbp.png" class="header-logo" alt="Logo Pesantren">
                   </div>
