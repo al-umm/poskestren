@@ -214,13 +214,23 @@
       background: #ffffff;
       border: 1px solid rgba(0, 0, 0, 0.05);
       border-radius: 1rem;
-      color: #1f2937; /* text-gray-800 */
+      color: #1f2937;
+      /* text-gray-800 */
       overflow: hidden;
     }
 
-    .public-panel::-webkit-scrollbar { width: 4px; }
-    .public-panel::-webkit-scrollbar-track { background: transparent; }
-    .public-panel::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.1); border-radius: 4px; }
+    .public-panel::-webkit-scrollbar {
+      width: 4px;
+    }
+
+    .public-panel::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    .public-panel::-webkit-scrollbar-thumb {
+      background: rgba(0, 0, 0, 0.1);
+      border-radius: 4px;
+    }
 
     .public-stat-card {
       border: 1px solid rgba(0, 0, 0, 0.05);
@@ -228,9 +238,10 @@
       padding: 0.6rem 0.75rem;
       transition: all 0.3s ease;
     }
+
     .public-stat-card:hover {
       transform: translateY(-2px);
-      box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
       filter: brightness(0.97);
     }
 
@@ -241,8 +252,9 @@
       padding: 0.65rem 0.8rem;
       cursor: pointer;
       transition: all 0.3s ease;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
     }
+
     .public-result-card:hover {
       background: #f8fafc;
       transform: translateX(4px);
@@ -254,23 +266,44 @@
       max-height: 72px;
       overflow-y: auto;
       scrollbar-width: thin;
-      scrollbar-color: rgba(0,0,0,0.15) transparent;
+      scrollbar-color: rgba(0, 0, 0, 0.15) transparent;
     }
-    .public-class-scroll::-webkit-scrollbar { width: 3px; }
-    .public-class-scroll::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.15); border-radius: 3px; }
+
+    .public-class-scroll::-webkit-scrollbar {
+      width: 3px;
+    }
+
+    .public-class-scroll::-webkit-scrollbar-thumb {
+      background: rgba(0, 0, 0, 0.15);
+      border-radius: 3px;
+    }
 
     .public-results-scroll {
       max-height: 220px;
       overflow-y: auto;
       scrollbar-width: thin;
-      scrollbar-color: rgba(0,0,0,0.15) transparent;
+      scrollbar-color: rgba(0, 0, 0, 0.15) transparent;
     }
-    .public-results-scroll::-webkit-scrollbar { width: 3px; }
-    .public-results-scroll::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.15); border-radius: 3px; }
+
+    .public-results-scroll::-webkit-scrollbar {
+      width: 3px;
+    }
+
+    .public-results-scroll::-webkit-scrollbar-thumb {
+      background: rgba(0, 0, 0, 0.15);
+      border-radius: 3px;
+    }
 
     @keyframes pulseGlow {
-      0%, 100% { opacity: 0.6; }
-      50% { opacity: 1; }
+
+      0%,
+      100% {
+        opacity: 0.6;
+      }
+
+      50% {
+        opacity: 1;
+      }
     }
 
     .pulse-dot {
@@ -354,18 +387,17 @@
 
         <!-- Public Info Panel -->
         <div class="w-full md:w-1/2 flex">
-          <div class="bg-white rounded-2xl card-shadow p-5 fade-in flex flex-col w-full text-gray-800" style="animation-delay:0.15s;">
+          <div class="bg-white rounded-2xl card-shadow p-5 fade-in flex flex-col w-full text-gray-800"
+            style="animation-delay:0.15s;">
             <!-- Greeting -->
             <div class="mb-4">
-              <div class="flex flex-col mb-1 border-b border-gray-100 pb-2">
-                <p class="text-sm md:text-base font-arabic text-teal-600/60 mb-1 text-center font-medium tracking-wide">بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ</p>
-                <p class="text-[13px] md:text-sm font-semibold text-center bg-clip-text text-transparent bg-gradient-to-r from-teal-600 to-cyan-600">Assalamu'alaikum Warahmatullahi Wabarakatuh</p>
+              <div class="flex flex-col mb-2 border-b border-gray-100 pb-3">
+                <p class="font-arabic text-teal-600/70 mb-1.5 text-left font-medium tracking-wide" style="font-size: 1.15rem;">بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ</p>
+                <p class="text-[13px] md:text-sm font-semibold text-left bg-clip-text text-transparent bg-gradient-to-r from-teal-600 to-cyan-600" style="letter-spacing: 0.02em;">Assalamu'alaikum Warahmatullahi Wabarakatuh</p>
               </div>
-              <div class="flex items-end justify-between mt-3 px-1">
-                <div>
-                  <p class="text-2xl font-black text-gray-800 tracking-tight" id="publicGreeting">Selamat Siang</p>
-                </div>
-                <div class="flex items-center gap-1.5 bg-gray-50 px-2.5 py-1 rounded-full border border-gray-100">
+              <div class="flex flex-col items-start gap-1.5 px-0.5 mt-2">
+                <p class="text-2xl font-black text-gray-800 tracking-tight leading-tight" id="publicGreeting">Selamat Siang</p>
+                <div class="flex items-center gap-1.5 bg-gray-50/80 px-2.5 py-1 rounded-full border border-gray-100 shadow-sm">
                   <span class="w-2 h-2 rounded-full bg-emerald-500 pulse-dot shadow-[0_0_8px_rgba(16,185,129,0.5)]"></span>
                   <p class="text-[10px] md:text-xs text-gray-500 font-medium" id="publicDateTime">Rabu, 11 Mar 2026</p>
                 </div>
@@ -376,12 +408,18 @@
             <div class="h-px w-full bg-gray-200 mb-3"></div>
 
             <!-- Stat Cards -->
-            <p class="text-[11px] uppercase tracking-widest bg-clip-text text-transparent bg-gradient-to-r from-teal-600 to-cyan-600 font-bold mb-1.5">Statistik Bulan Ini</p>
+            <p
+              class="text-[11px] uppercase tracking-widest bg-clip-text text-transparent bg-gradient-to-r from-teal-600 to-cyan-600 font-bold mb-1.5">
+              Statistik Bulan Ini</p>
             <div class="grid grid-cols-2 gap-2 mb-3">
               <div class="public-stat-card bg-gradient-to-br from-teal-50 to-teal-100 border-l-2 border-teal-500">
                 <div class="flex items-center gap-2">
                   <div class="w-7 h-7 rounded-lg flex items-center justify-center bg-teal-100 text-teal-700">
-                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2">
+                      </path>
+                    </svg>
                   </div>
                   <div>
                     <p class="text-[10px] text-teal-700/80 font-medium leading-tight">Total Layanan</p>
@@ -392,7 +430,11 @@
               <div class="public-stat-card bg-gradient-to-br from-cyan-50 to-cyan-100 border-l-2 border-cyan-500">
                 <div class="flex items-center gap-2">
                   <div class="w-7 h-7 rounded-lg flex items-center justify-center bg-cyan-100 text-cyan-700">
-                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
+                      </path>
+                    </svg>
                   </div>
                   <div>
                     <p class="text-[10px] text-cyan-700/80 font-medium leading-tight">Total MCU</p>
@@ -403,7 +445,10 @@
               <div class="public-stat-card bg-gradient-to-br from-blue-50 to-blue-100 border-l-2 border-blue-500">
                 <div class="flex items-center gap-2">
                   <div class="w-7 h-7 rounded-lg flex items-center justify-center bg-blue-100 text-blue-700">
-                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                    </svg>
                   </div>
                   <div>
                     <p class="text-[10px] text-blue-700/80 font-medium leading-tight">Siswa Terlayani</p>
@@ -414,7 +459,11 @@
               <div class="public-stat-card bg-gradient-to-br from-purple-50 to-purple-100 border-l-2 border-purple-500">
                 <div class="flex items-center gap-2">
                   <div class="w-7 h-7 rounded-lg flex items-center justify-center bg-purple-100 text-purple-700">
-                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z">
+                      </path>
+                    </svg>
                   </div>
                   <div>
                     <p class="text-[10px] text-purple-700/80 font-medium leading-tight">Rata-rata IMT</p>
@@ -428,22 +477,33 @@
             <div class="h-px w-full bg-gray-200 mb-3"></div>
 
             <!-- Class Filter + Search -->
-            <p class="text-[11px] uppercase tracking-widest bg-clip-text text-transparent bg-gradient-to-r from-teal-600 to-cyan-600 font-bold mb-1.5">Cari Layanan Bulan Ini</p>
+            <p
+              class="text-[11px] uppercase tracking-widest bg-clip-text text-transparent bg-gradient-to-r from-teal-600 to-cyan-600 font-bold mb-1.5">
+              Cari Layanan Bulan Ini</p>
             <div class="flex gap-2 items-end mb-3">
               <div class="flex-1">
-                <div id="publicClassCheckboxes" class="public-class-scroll bg-gray-50 rounded-lg p-2 space-y-0.5 border border-gray-200">
+                <div id="publicClassCheckboxes"
+                  class="public-class-scroll bg-gray-50 rounded-lg p-2 space-y-0.5 border border-gray-200">
                   <p class="text-[10px] text-center text-gray-400">Memuat kelas...</p>
                 </div>
               </div>
-              <button onclick="searchPublicLayanan()" class="h-9 w-9 flex-shrink-0 rounded-lg flex items-center justify-center transition-all hover:scale-105 active:scale-95 shadow-sm" style="background: linear-gradient(135deg, #0d9488, #0891b2);" title="Cari">
-                <svg class="w-4 h-4" fill="none" stroke="white" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+              <button onclick="searchPublicLayanan()"
+                class="h-9 w-9 flex-shrink-0 rounded-lg flex items-center justify-center transition-all hover:scale-105 active:scale-95 shadow-sm"
+                style="background: linear-gradient(135deg, #0d9488, #0891b2);" title="Cari">
+                <svg class="w-4 h-4" fill="none" stroke="white" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                </svg>
               </button>
             </div>
 
             <!-- Results -->
             <div id="publicResultsContainer" class="public-results-scroll space-y-2 flex-1">
               <div class="text-center py-4 text-gray-400">
-                <svg class="w-8 h-8 mx-auto mb-1 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                <svg class="w-8 h-8 mx-auto mb-1 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                </svg>
                 <p class="text-[11px]">Pilih kelas & tekan cari</p>
               </div>
             </div>
@@ -454,12 +514,16 @@
     </div>
 
     <!-- Public Detail Modal -->
-    <div id="publicDetailModal" class="fixed inset-0 bg-black/60 hidden z-50 flex items-center justify-center p-4 no-print" onclick="if(event.target===this)closePublicDetail()">
+    <div id="publicDetailModal"
+      class="fixed inset-0 bg-black/60 hidden z-50 flex items-center justify-center p-4 no-print"
+      onclick="if(event.target===this)closePublicDetail()">
       <div class="bg-white rounded-2xl card-shadow max-w-sm w-full fade-in">
         <div class="gradient-bg text-white px-5 py-3 flex items-center justify-between rounded-t-2xl">
           <h3 class="text-sm font-bold">Detail Layanan Kesehatan</h3>
           <button onclick="closePublicDetail()" class="p-1 hover:bg-white/20 rounded-lg transition-all">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
           </button>
         </div>
         <div id="publicDetailContent" class="p-5 space-y-3 max-h-80 overflow-y-auto text-sm"></div>
@@ -3808,7 +3872,7 @@
     function updatePublicDateTime() {
       const now = new Date();
       const days = ['Ahad', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
-      const months = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Ags','Sep','Okt','Nov','Des'];
+      const months = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Ags', 'Sep', 'Okt', 'Nov', 'Des'];
       const dayName = days[now.getDay()];
       const date = now.getDate();
       const monthName = months[now.getMonth()];
@@ -3867,24 +3931,54 @@
         container.innerHTML = '<p class="text-[10px] text-center text-gray-400">Tidak ada data kelas</p>';
         return;
       }
-      container.innerHTML = classes.map(k => `
+
+      let html = `
+        <label class="flex items-center gap-1.5 cursor-pointer hover:bg-gray-100 rounded px-1 py-0.5 transition-colors border-b border-gray-100 mb-1 pb-1">
+          <input type="checkbox" id="publicClassAll" onchange="toggleAllPublicClasses(this.checked)" class="w-3 h-3 rounded text-teal-600 focus:ring-teal-500 border-gray-300">
+          <span class="text-[11px] text-teal-700 font-bold">Semua Kelas</span>
+        </label>
+      `;
+
+      html += classes.map(k => `
         <label class="flex items-center gap-1.5 cursor-pointer hover:bg-gray-100 rounded px-1 py-0.5 transition-colors">
-          <input type="checkbox" value="${k}" class="publicClassCb w-3 h-3 rounded text-teal-600 focus:ring-teal-500 border-gray-300">
+          <input type="checkbox" value="${k}" onchange="checkPublicClassAllStatus()" class="publicClassCb w-3 h-3 rounded text-teal-600 focus:ring-teal-500 border-gray-300">
           <span class="text-[11px] text-gray-700 font-medium">${k}</span>
         </label>
       `).join('');
+
+      container.innerHTML = html;
+    }
+
+    function toggleAllPublicClasses(checked) {
+      document.querySelectorAll('.publicClassCb').forEach(cb => {
+        cb.checked = checked;
+      });
+    }
+
+    function checkPublicClassAllStatus() {
+      const allCbs = document.querySelectorAll('.publicClassCb');
+      const checkedCbs = document.querySelectorAll('.publicClassCb:checked');
+      const allCheck = document.getElementById('publicClassAll');
+      if (allCheck) {
+        allCheck.checked = allCbs.length > 0 && allCbs.length === checkedCbs.length;
+      }
     }
 
     function searchPublicLayanan() {
       const selected = Array.from(document.querySelectorAll('.publicClassCb:checked')).map(cb => cb.value);
+      const container = document.getElementById('publicResultsContainer');
       const monthData = getCurrentMonthFilter(publicLayananData, 'tanggal');
 
-      let results;
       if (selected.length === 0) {
-        results = monthData;
-      } else {
-        results = monthData.filter(l => selected.includes(l.kelas));
+        container.innerHTML = `
+          <div class="text-center py-4 text-gray-400">
+            <svg class="w-8 h-8 mx-auto mb-1 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+            <p class="text-[11px] font-medium text-teal-600/70">Pilih kelas untuk melihat riwayat layanan</p>
+          </div>`;
+        return;
       }
+
+      const results = monthData.filter(l => selected.includes(l.kelas));
 
       // Sort newest first (DD/MM/YYYY)
       results.sort((a, b) => {
@@ -3894,7 +3988,6 @@
       });
 
       publicSearchResults = results;
-      const container = document.getElementById('publicResultsContainer');
 
       if (results.length === 0) {
         container.innerHTML = `
@@ -3905,14 +3998,14 @@
         return;
       }
 
-      const gradColors = ['#0d9488','#0891b2','#0284c7','#7c3aed','#db2777','#ea580c','#15803d','#4f46e5'];
+      const gradColors = ['#0d9488', '#0891b2', '#0284c7', '#7c3aed', '#db2777', '#ea580c', '#15803d', '#4f46e5'];
 
       container.innerHTML = results.map((l, i) => {
         const nama = l['nama siswa'] || l.nama_siswa || '-';
         const color = gradColors[i % gradColors.length];
         return `<div class="public-result-card" onclick="showPublicDetail(${i})">
           <div class="flex items-center gap-2">
-            <div class="w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-bold flex-shrink-0" style="background:${color}15;color:${color}; border: 1px solid ${color}33;">${nama.split(' ').map(n=>n[0]).join('').substring(0,2).toUpperCase()}</div>
+            <div class="w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-bold flex-shrink-0" style="background:${color}15;color:${color}; border: 1px solid ${color}33;">${nama.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase()}</div>
             <div class="flex-1 min-w-0">
               <p class="text-xs font-semibold text-gray-800 truncate">${nama}</p>
               <p class="text-[10px] text-gray-500 truncate">${l.kelas || '-'} · ${l.tanggal || '-'}</p>
